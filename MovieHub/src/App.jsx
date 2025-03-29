@@ -93,7 +93,7 @@ const App = () => {
         <section className="trending">
           <h2>Trending Movies</h2>
 
-          {loading && <p>Loading...</p>}
+          {loading && <Loader />}
           {errorMessage && <p className="text-red-500">{errorMessage}</p>}
           {trendingMovies.length > 0 ? (
             <ul>
@@ -119,7 +119,7 @@ const App = () => {
         <section className="all-movies">
           <h2>All Movies</h2>
 
-          {loading && <p>Loading...</p>}
+          {loading && <Loader />}
           {errorMessage && <p className="text-red-500">{errorMessage}</p>}
           {allMovies.length > 0 ? (
             <ul>
