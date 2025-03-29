@@ -1,14 +1,40 @@
 import React from "react";
 
-const MovieCard = () => {
+const MovieCard = ({
+  movie: {
+    title,
+    poster_path,
+    id,
+    vote_average,
+    original_language,
+    release_date,
+  },
+}) => {
   return (
     <div className="movie-card">
-      <h2 className="movie-title">Movie Title</h2>
-      <img src="https://via.placeholder.com/150" className="movie-poster" />
-      <p className="movie-description">
-        This is a brief description of the movie.
-      </p>
-      <button className="movie-button">Watch Now</button>
+      <img
+        src={
+          poster_path
+            ? `https://image.tmdb.org/t/p/w500/${poster_path}`
+            : "no-poster.png"
+        }
+        className="movie-poster"
+      />
+      <h3 className="movie-title">{title}</h3>
+      <div className="content">
+        <div className="rating">
+          <img src="star.svg" alt="Star Icon" />
+          <p>{vote_average ? vote_average.toFixed(1) : "N/A"}</p>
+        </div>
+
+        <span>•</span>
+        <p className="lang">{original_language}</p>
+
+        <span>•</span>
+        <p className="year">
+          {release_date ? release_date.split("-")[0] : "N/A"}
+        </p>
+      </div>
     </div>
   );
 };
