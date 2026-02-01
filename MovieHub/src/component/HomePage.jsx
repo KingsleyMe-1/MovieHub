@@ -91,7 +91,6 @@ const HomePage = () => {
         }
 
         setTrendingMovies(data.results);
-        console.log(data.results);
         setErrorMessage("");
       } catch (error) {
         setErrorMessage("Failed to fetch trending movies");
