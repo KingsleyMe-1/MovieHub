@@ -9,7 +9,8 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [allMovies, setAllMovies] = React.useState([]);
   const [trendingMovies, setTrendingMovies] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [loadingMovies, setLoadingMovies] = React.useState(false);
+  const [loadingTrending, setLoadingTrending] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
@@ -17,7 +18,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchMovies = async (query = "") => {
-      setLoading(true);
+      setLoadingMovies(true);
       try {
         const API_KEY = import.meta.env.VITE_API_TMDB_KEY;
         const API_URL = "https://api.themoviedb.org/3";
@@ -46,7 +47,7 @@ const HomePage = () => {
         setErrorMessage("Failed to fetch allMovies");
         console.error("Error fetching allMovies:", error);
       } finally {
-        setLoading(false);
+        setLoadingMovies(false);
       }
     };
     fetchMovies(searchTerm);
@@ -69,7 +70,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchTrendingMovies = async () => {
-      setLoading(true);
+      setLoadingTrending(true);
       try {
         const API_KEY = import.meta.env.VITE_API_TMDB_KEY;
         const API_URL = "https://api.themoviedb.org/3";
@@ -96,7 +97,7 @@ const HomePage = () => {
         setErrorMessage("Failed to fetch trending movies");
         console.error("Error fetching trending movies:", error);
       } finally {
-        setLoading(false);
+        setLoadingTrending(false);
       }
     };
     fetchTrendingMovies();
@@ -121,7 +122,7 @@ const HomePage = () => {
             <section className="trending">
               <h2>Trending Movies</h2>
 
-              {loading ? (
+              {loadingTrending ? (
                 <Loader />
               ) : errorMessage ? (
                 <p className="text-red-500">{errorMessage}</p>
@@ -153,7 +154,7 @@ const HomePage = () => {
           <section className="all-movies">
             <h2>All Movies</h2>
 
-            {loading ? (
+            {loadingMovies ? (
               <Loader />
             ) : errorMessage ? (
               <p className="text-red-500">{errorMessage}</p>
