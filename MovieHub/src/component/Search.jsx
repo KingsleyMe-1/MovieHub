@@ -5,7 +5,7 @@ const Search = ({ searchTerm, setSearchTerm }) => {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      setSearchTerm(inputValue); // Update the search term only on Enter
+      setSearchTerm(inputValue);
     }
   };
 
@@ -19,8 +19,8 @@ const Search = ({ searchTerm, setSearchTerm }) => {
           id="search-term"
           placeholder="Search for movies..."
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)} // Update local state
-          onKeyDown={handleKeyDown} // Trigger update on Enter key press
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown} 
         />
       </div>
     </div>
