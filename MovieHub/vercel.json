@@ -2,8 +2,5 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "vite",
-  "env": {
-    "VITE_API_TMDB_KEY": "@vite_api_tmdb_key"
-  }
+  "framework": "vite"
 }
