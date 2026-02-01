@@ -60,6 +60,11 @@ const App = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleSearch = (term) => {
+    setCurrentPage(1);
+    setSearchTerm(term);
+  };
+
   useEffect(() => {
     const fetchTrendingMovies = async () => {
       setLoading(true);
@@ -139,7 +144,7 @@ const App = () => {
         <header>
           <img src="hero-img.png" alt="Movie Logo" />
           <h1 className="hero-title">Find your favorite Movies here</h1>
-          <Search setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
+          <Search setSearchTerm={handleSearch} searchTerm={searchTerm} />
         </header>
 
         <div>
