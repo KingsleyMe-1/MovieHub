@@ -2,16 +2,17 @@ import React, { useEffect } from "react";
 import MovieCard from "./component/MovieCard";
 import Search from "./component/Search";
 import Loader from "./component/Loader";
+import Pagination from "./component/Pagination";
 
 const App = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [allMovies, setAllMovies] = React.useState([]);
-  const [searchMovies, setSearchMovies] = React.useState([]);
   const [trendingMovies, setTrendingMovies] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(1);
 
-  // Fetch All Movies from TMDB API
   useEffect(() => {
     const fetchMovies = async (query = "") => {
       setLoading(true);
@@ -27,8 +28,8 @@ const App = () => {
         };
 
         const endpoint = query
-          ? `${API_URL}/search/movie?query=${query}`
-          : `${API_URL}/discover/movie?sort_by=popularity.desc`;
+          ? `${API_URL}/search/movie?query=${query}&page=${currentPage}`
+          : `${API_URL}/discover/movie?sort_by=popularity.desc&page=${currentPage}`;
 
         const response = await fetch(endpoint, API_OPTIONS);
         const data = await response.json();
@@ -37,6 +38,7 @@ const App = () => {
         }
 
         setAllMovies(data.results);
+        setTotalPages(data.total_pages || 1);
         setErrorMessage("");
       } catch (error) {
         setErrorMessage("Failed to fetch allMovies");
@@ -46,9 +48,18 @@ const App = () => {
       }
     };
     fetchMovies(searchTerm);
+  }, [searchTerm, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
   }, [searchTerm]);
 
-  // Fetch Trending Movies from TMDB API
+  const handlePageChange = (page) => {
+    const nextPage = Math.max(1, Math.min(page, totalPages));
+    setCurrentPage(nextPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   useEffect(() => {
     const fetchTrendingMovies = async () => {
       setLoading(true);
@@ -168,11 +179,20 @@ const App = () => {
             ) : errorMessage ? (
               <p className="text-red-500">{errorMessage}</p>
             ) : allMovies.length > 0 ? (
-              <ul>
-                {allMovies.map((movie) => (
-                  <MovieCard key={movie.id} movie={movie} />
-                ))}
-              </ul>
+              <>
+                <ul>
+                  {allMovies.map((movie) => (
+                    <MovieCard key={movie.id} movie={movie} />
+                  ))}
+                </ul>
+                {totalPages > 1 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+              </>
             ) : (
               <p className="text-red-500">No "{searchTerm}" found!</p>
             )}
