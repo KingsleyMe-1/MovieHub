@@ -30,7 +30,7 @@ const HomePage = () => {
         };
 
         const endpoint = query
-          ? `${API_URL}/search/movie?query=${query}&page=${currentPage}`
+          ? `${API_URL}/search/movie?query=${encodeURIComponent(query)}&page=${currentPage}`
           : `${API_URL}/discover/movie?sort_by=popularity.desc&page=${currentPage}`;
 
         const response = await fetch(endpoint, API_OPTIONS);
