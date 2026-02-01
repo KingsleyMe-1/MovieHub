@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import MovieCard from "./component/MovieCard";
 import Search from "./component/Search";
 import Loader from "./component/Loader";
@@ -179,6 +180,7 @@ const App = () => {
           </section>
         </div>
       </div>
+      <SpeedInsights />
     </main>
   );
 };
