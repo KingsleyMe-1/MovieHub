@@ -330,6 +330,26 @@
   box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
 }
 
+.similar-movies-section {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 30px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 40px;
+}
+
+.similar-movies-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.similar-movies-section .movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
 .loader-container,
 .error-container {
   display: flex;
