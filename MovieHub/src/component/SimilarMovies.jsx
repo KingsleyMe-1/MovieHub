@@ -65,7 +65,7 @@ const SimilarMovies = ({ movieId }) => {
       <div className="movies-grid">
         {similarMovies
           .filter((movie) => movie && movie.poster_path)
-          .slice(0, 6)
+          .slice(0, 12)
           .map((movie) => (
             <div
               key={movie.id}
