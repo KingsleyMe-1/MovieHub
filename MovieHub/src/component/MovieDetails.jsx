@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/MovieDetails.css";
+import SimilarMovies from "./SimilarMovies";
 
 const MovieDetails = () => {
   const { movieId } = useParams();
@@ -274,6 +275,9 @@ const MovieDetails = () => {
             </div>
           </div>
         )}
+
+        {/* Similar Movies */}
+        <SimilarMovies movieId={movieId} />
       </div>
     </div>
   );

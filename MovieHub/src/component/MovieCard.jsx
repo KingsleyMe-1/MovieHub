@@ -10,20 +10,24 @@ const MovieCard = ({
     release_date,
   },
 }) => {
+  const handleImageError = (e) => {
+    e.target.style.display = "none";
+  };
+
   return (
     <div className="movie-card">
-      <img
-        src={
-          poster_path
-            ? `https://image.tmdb.org/t/p/w500/${poster_path}`
-            : "no-poster.png"
-        }
-        className="movie-poster"
-      />
+      {poster_path && (
+        <img
+          src={`https://image.tmdb.org/t/p/w500/${poster_path}`}
+          className="movie-poster"
+          onError={handleImageError}
+          alt={title}
+        />
+      )}
       <h3 className="movie-title">{title}</h3>
       <div className="content">
         <div className="rating">
-          <img src="star.svg" alt="Star Icon" />
+          <img src="/star.svg" alt="Star Icon" />
           <p>{vote_average ? vote_average.toFixed(1) : "N/A"}</p>
         </div>
 
