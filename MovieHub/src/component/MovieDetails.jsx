@@ -95,6 +95,9 @@ const MovieDetails = () => {
     ?.find((person) => person.job === "Director")
     ?.name;
   const cast = credits?.cast?.slice(0, 6) || [];
+  const trailer = movieData.videos?.results?.find(
+    (video) => video.type === "Trailer" && video.site === "YouTube"
+  );
 
   return (
     <div className="details-page">
@@ -193,14 +196,14 @@ const MovieDetails = () => {
         </div>
 
         {/* Trailer Video */}
-        {movieData.videos?.results?.[0]?.key && (
+        {trailer && (
           <div className="trailer-section">
+            <h2>Trailer</h2>
             <div className="video-container">
               <iframe
                 className="trailer-video"
-                src={`https://www.youtube.com/embed/${movieData.videos.results[0].key}?autoplay=1&controls=1&modestbranding=1&mute=1`}
+                src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1&controls=1&modestbranding=1&mute=1`}
                 title={`${title} Trailer`}
-                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
