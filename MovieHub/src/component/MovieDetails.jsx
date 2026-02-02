@@ -198,7 +198,6 @@ const MovieDetails = () => {
         {/* Trailer Video */}
         {trailer && (
           <div className="trailer-section">
-            <h2>Trailer</h2>
             <div className="video-container">
               <iframe
                 className="trailer-video"
