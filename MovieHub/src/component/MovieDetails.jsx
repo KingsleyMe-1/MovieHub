@@ -24,7 +24,7 @@ const MovieDetails = () => {
           },
         };
 
-        const endpoint = `${API_URL}/movie/${movieId}?append_to_response=credits,reviews`;
+        const endpoint = `${API_URL}/movie/${movieId}?append_to_response=credits,reviews,videos`;
         const response = await fetch(endpoint, API_OPTIONS);
         const data = await response.json();
 
@@ -191,6 +191,22 @@ const MovieDetails = () => {
           <h2>Overview</h2>
           <p>{overview || "No overview available."}</p>
         </div>
+
+        {/* Trailer Video */}
+        {movieData.videos?.results?.[0]?.key && (
+          <div className="trailer-section">
+            <div className="video-container">
+              <iframe
+                className="trailer-video"
+                src={`https://www.youtube.com/embed/${movieData.videos.results[0].key}?autoplay=1&controls=1&modestbranding=1&mute=1`}
+                title={`${title} Trailer`}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div>
+        )}
 
         {/* Budget and Revenue */}
         {(budget > 0 || revenue > 0) && (
