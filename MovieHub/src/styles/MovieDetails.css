@@ -330,6 +330,39 @@
   box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
 }
 
+.trailer-section {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 30px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 40px;
+}
+
+.trailer-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.trailer-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+}
+
 .similar-movies-section {
   background: rgba(255, 255, 255, 0.05);
   padding: 30px;
