@@ -33,17 +33,18 @@ const NavigationBar = ({ onSearch, onCategoryChange, currentCategory, searchTerm
     <nav className="navbar">
       <div className="navbar-container">
         {/* Logo Section */}
-        <div className="navbar-logo" onClick={handleLogoClick}>
+        <button type="button" className="navbar-logo" onClick={handleLogoClick} aria-label="MovieHub - Go to Homepage">
           <svg
             className="navbar-logo-icon"
             viewBox="0 0 24 24"
             fill="currentColor"
+            aria-hidden="true"
           >
             <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z" />
             <path d="M5.76 10h2.48l.72 1.44L10.4 8H6.48l-.72 3.44M11.76 10h2.48l.72 1.44L16.4 8h-3.92l-.72 3.44" opacity="0.6" />
           </svg>
           <span className="navbar-brand">MovieHub</span>
-        </div>
+        </button>
 
         {/* Search Bar */}
         <div className="navbar-search">
