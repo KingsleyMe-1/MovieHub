@@ -138,12 +138,30 @@ const HomePage = () => {
 
   return (
     <main>
-      <Navbar 
-        onSearch={handleSearch} 
-        onCategoryChange={handleCategoryChange}
-        currentCategory={category}
-        searchTerm={searchTerm}
-      />
+      <Navbar onSearch={handleSearch} />
+      
+      {/* Category Tabs */}
+      <div className="category-tabs-wrapper">
+        <div className="category-tabs">
+          {[
+            { id: "popular", label: "Popular" },
+            { id: "now_playing", label: "Now playing" },
+            { id: "top_rated", label: "Top rated" },
+            { id: "upcoming", label: "Upcoming" },
+          ].map((cat) => (
+            <button
+              key={cat.id}
+              className={`category-tab-btn ${
+                !searchTerm && category === cat.id ? "active" : ""
+              }`}
+              onClick={() => handleCategoryChange(cat.id)}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      
       <div className="wrapper">
         <div>
           {!searchTerm && (
@@ -218,4 +236,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
