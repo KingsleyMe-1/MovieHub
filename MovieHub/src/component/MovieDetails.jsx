@@ -9,6 +9,8 @@ const MovieDetails = () => {
   const [movieData, setMovieData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -99,6 +101,20 @@ const MovieDetails = () => {
     (video) => video.type === "Trailer" && video.site === "YouTube"
   );
 
+  const handleAddToWatchlist = () => {
+    setIsInWatchlist(!isInWatchlist);
+    const message = !isInWatchlist
+      ? "Added to Watchlist"
+      : "Removed from Watchlist";
+    console.log(message, movieId);
+  };
+
+  const handleAddToFavorites = () => {
+    setIsFavorite(!isFavorite);
+    const message = !isFavorite ? "Added to Favorites" : "Removed from Favorites";
+    console.log(message, movieId);
+  };
+
   return (
     <div className="details-page">
       <button className="back-btn" onClick={() => navigate(-1)}>
@@ -131,6 +147,29 @@ const MovieDetails = () => {
 
           <div className="info-section">
             <h1 className="detail-title">{title}</h1>
+
+            <div className="action-buttons">
+              <button
+                className={`action-btn watchlist-btn ${isInWatchlist ? "active" : ""}`}
+                onClick={handleAddToWatchlist}
+                title={isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
+              >
+                <i className={`${isInWatchlist ? "fa-solid" : "fa-regular"} fa-bookmark btn-icon`}></i>
+                <span className="btn-text">
+                  {isInWatchlist ? "In Watchlist" : "Add to Watchlist"}
+                </span>
+              </button>
+              <button
+                className={`action-btn favorite-btn ${isFavorite ? "active" : ""}`}
+                onClick={handleAddToFavorites}
+                title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+              >
+                <i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart btn-icon`}></i>
+                <span className="btn-text black">
+                  {isFavorite ? "Liked" : "Add to Favorites"}
+                </span>
+              </button>
+            </div>
 
             <div className="basic-info">
               <div className="info-item">
