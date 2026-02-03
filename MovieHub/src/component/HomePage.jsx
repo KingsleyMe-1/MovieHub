@@ -4,6 +4,8 @@ import MovieCard from "./MovieCard";
 import Search from "./Search";
 import Loader from "./Loader";
 import Pagination from "./Pagination";
+import Navbar from "./NavigationBar";
+import "../styles/NavigationBar.css";
 
 const HomePage = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -14,6 +16,7 @@ const HomePage = () => {
   const [errorMessage, setErrorMessage] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
+  const [category, setCategory] = React.useState("popular");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,9 +33,20 @@ const HomePage = () => {
           },
         };
 
-        const endpoint = query
-          ? `${API_URL}/search/movie?query=${encodeURIComponent(query)}&page=${currentPage}`
-          : `${API_URL}/discover/movie?sort_by=popularity.desc&page=${currentPage}`;
+        let endpoint;
+        
+        if (query) {
+          endpoint = `${API_URL}/search/movie?query=${encodeURIComponent(query)}&page=${currentPage}`;
+        } else {
+          // Map category to API endpoint
+          const categoryEndpoints = {
+            popular: `${API_URL}/movie/popular?page=${currentPage}`,
+            now_playing: `${API_URL}/movie/now_playing?page=${currentPage}`,
+            top_rated: `${API_URL}/movie/top_rated?page=${currentPage}`,
+            upcoming: `${API_URL}/movie/upcoming?page=${currentPage}`,
+          };
+          endpoint = categoryEndpoints[category] || categoryEndpoints.popular;
+        }
 
         const response = await fetch(endpoint, API_OPTIONS);
         const data = await response.json();
@@ -51,7 +65,7 @@ const HomePage = () => {
       }
     };
     fetchMovies(searchTerm);
-  }, [searchTerm, currentPage]);
+  }, [searchTerm, currentPage, category]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -66,6 +80,12 @@ const HomePage = () => {
   const handleSearch = (term) => {
     setCurrentPage(1);
     setSearchTerm(term);
+  };
+
+  const handleCategoryChange = (newCategory) => {
+    setCategory(newCategory);
+    setSearchTerm(""); // Clear search when changing category
+    setCurrentPage(1);
   };
 
   useEffect(() => {
@@ -106,20 +126,29 @@ const HomePage = () => {
     navigate(`/movie/${movieId}`);
   };
 
+  const getCategoryTitle = () => {
+    const categoryTitles = {
+      popular: "Popular",
+      now_playing: "Now Playing",
+      top_rated: "Top Rated",
+      upcoming: "Upcoming",
+    };
+    return searchTerm ? `Search Results: ${searchTerm}` : `${categoryTitles[category] || "All"} Movies`;
+  };
+
   return (
     <main>
-      <div className="pattern"></div>
+      <Navbar 
+        onSearch={handleSearch} 
+        onCategoryChange={handleCategoryChange}
+        currentCategory={category}
+        searchTerm={searchTerm}
+      />
       <div className="wrapper">
-        <header>
-          <img src="hero-img.png" alt="Movie Logo" />
-          <h1 className="hero-title">Find your favorite Movies here</h1>
-          <Search setSearchTerm={handleSearch} searchTerm={searchTerm} />
-        </header>
-
         <div>
           {!searchTerm && (
             <section className="trending">
-              <h2>Trending Movies</h2>
+              <h2>Trending Now</h2>
 
               {loadingTrending ? (
                 <Loader />
@@ -151,7 +180,7 @@ const HomePage = () => {
           )}
 
           <section className="all-movies">
-            <h2>All Movies</h2>
+            <h2>{getCategoryTitle()}</h2>
 
             {loadingMovies ? (
               <Loader />
@@ -189,3 +218,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
