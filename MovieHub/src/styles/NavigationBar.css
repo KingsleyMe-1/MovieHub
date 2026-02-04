@@ -157,7 +157,20 @@
   height: 1.75rem;
 }
 
-.navbar-signin-button {
+.navbar-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-user-name {
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.navbar-signin-button,
+.navbar-signout-button {
   padding: 0.625rem 1.5rem;
   background-color: #ef4444;
   color: #ffffff;
@@ -170,8 +183,17 @@
   transition: background-color 0.3s ease;
 }
 
-.navbar-signin-button:hover {
+.navbar-signin-button:hover,
+.navbar-signout-button:hover {
   background-color: #dc2626;
+}
+
+.navbar-signout-button {
+  background-color: #6b7280;
+}
+
+.navbar-signout-button:hover {
+  background-color: #4b5563;
 }
 
 /* Hamburger Menu Button (Hidden by default) */
@@ -293,6 +315,19 @@
   font-weight: 500;
 }
 
+.sidebar-user-info {
+  padding: 1rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.sidebar-user-name {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
 .sidebar-button {
   padding: 0.875rem 1.5rem;
   background-color: #ef4444;
@@ -304,6 +339,7 @@
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 100%;
 }
 
 .sidebar-button:hover {

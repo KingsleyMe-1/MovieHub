@@ -101,6 +101,48 @@
   gap: 12px;
   margin-bottom: 30px;
   flex-wrap: wrap;
+  position: relative;
+}
+
+.action-btn-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.action-btn-wrapper .custom-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.95);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.action-btn-wrapper .custom-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.95);
+}
+
+.action-btn-wrapper:hover .custom-tooltip {
+  visibility: visible;
+  opacity: 1;
 }
 
 .action-btn {
@@ -146,6 +188,19 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: pointer;
+  border-color: #4a5568;
+}
+
+.action-btn:disabled:hover {
+  background: transparent;
+  border-color: #4a5568;
+  transform: translateY(0);
+  box-shadow: none;
+}
+
 .watchlist-btn.active {
   background: #22c55e;
   border-color: #22c55e;
@@ -168,6 +223,43 @@
   background: #be185d;
   border-color: #be185d;
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.5);
+}
+
+.auth-toast {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+  animation: slideIn 0.3s ease-out;
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.toast-icon {
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .basic-info {
