@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const NavigationBar = ({ onSearch }) => {
   const [searchInput, setSearchInput] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -29,6 +31,15 @@ const NavigationBar = ({ onSearch }) => {
 
   const handleLogoClick = () => {
     navigate("/");
+  };
+
+  const handleSignInClick = () => {
+    navigate("/signin");
+  };
+
+  const handleSignOutClick = () => {
+    signOut();
+    closeSidebar();
   };
 
   return (
@@ -110,7 +121,18 @@ const NavigationBar = ({ onSearch }) => {
             </svg>
           </a>
 
-          <button className="navbar-signin-button">SIGN IN</button>
+          {user ? (
+            <div className="navbar-user-menu">
+              <span className="navbar-user-name">👤 {user.name}</span>
+              <button className="navbar-signout-button" onClick={handleSignOutClick}>
+                SIGN OUT
+              </button>
+            </div>
+          ) : (
+            <button className="navbar-signin-button" onClick={handleSignInClick}>
+              SIGN IN
+            </button>
+          )}
         </div>
       </div>
 
@@ -150,9 +172,20 @@ const NavigationBar = ({ onSearch }) => {
             <span>GitHub Repository</span>
           </a>
 
-          <button className="sidebar-button" onClick={closeSidebar}>
-            SIGN IN
-          </button>
+          {user ? (
+            <>
+              <div className="sidebar-user-info">
+                <span className="sidebar-user-name">👤 {user.name}</span>
+              </div>
+              <button className="sidebar-button" onClick={handleSignOutClick}>
+                SIGN OUT
+              </button>
+            </>
+          ) : (
+            <button className="sidebar-button" onClick={() => { handleSignInClick(); closeSidebar(); }}>
+              SIGN IN
+            </button>
+          )}
         </div>
       </div>
     </nav>
