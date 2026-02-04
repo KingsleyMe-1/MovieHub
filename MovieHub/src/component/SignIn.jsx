@@ -64,9 +64,6 @@ const SignIn = () => {
     <div className="signin-page">
       <div className="signin-container">
         <div className="signin-header">
-          <h1 className="app-logo" onClick={() => navigate("/")}>
-            🎬 MovieHub
-          </h1>
           <h2>{isSignUp ? "Create Account" : "Welcome Back"}</h2>
           <p className="signin-subtitle">
             {isSignUp
@@ -130,12 +127,6 @@ const SignIn = () => {
             <button onClick={toggleMode} className="toggle-btn">
               {isSignUp ? "Sign In" : "Sign Up"}
             </button>
-          </p>
-        </div>
-
-        <div className="demo-info">
-          <p className="demo-note">
-            <strong>Demo Mode:</strong> Use any email and password to sign in
           </p>
         </div>
       </div>
