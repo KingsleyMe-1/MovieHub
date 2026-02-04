@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "../styles/MovieDetails.css";
 import SimilarMovies from "./SimilarMovies";
 
 const MovieDetails = () => {
   const { movieId } = useParams();
   const navigate = useNavigate();
+  const { user, addToWatchlist, addToFavorites, isInWatchlist, isFavorite } = useAuth();
   const [movieData, setMovieData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isInWatchlist, setIsInWatchlist] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "" });
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -101,18 +102,33 @@ const MovieDetails = () => {
     (video) => video.type === "Trailer" && video.site === "YouTube"
   );
 
+  const showToast = (message) => {
+    setToast({ show: true, message });
+    setTimeout(() => {
+      setToast({ show: false, message: "" });
+    }, 3000);
+  };
+
+  const handleDisabledWatchlistClick = () => {
+    showToast("Sign in to Add to Watchlist");
+  };
+
+  const handleDisabledFavoritesClick = () => {
+    showToast("Sign in to Add to Favorites");
+  };
+
   const handleAddToWatchlist = () => {
-    setIsInWatchlist(!isInWatchlist);
-    const message = !isInWatchlist
-      ? "Added to Watchlist"
-      : "Removed from Watchlist";
-    console.log(message, movieId);
+    if (!user) {
+      return;
+    }
+    addToWatchlist(parseInt(movieId));
   };
 
   const handleAddToFavorites = () => {
-    setIsFavorite(!isFavorite);
-    const message = !isFavorite ? "Added to Favorites" : "Removed from Favorites";
-    console.log(message, movieId);
+    if (!user) {
+      return;
+    }
+    addToFavorites(parseInt(movieId));
   };
 
   return (
@@ -149,27 +165,40 @@ const MovieDetails = () => {
             <h1 className="detail-title">{title}</h1>
 
             <div className="action-buttons">
-              <button
-                className={`action-btn watchlist-btn ${isInWatchlist ? "active" : ""}`}
-                onClick={handleAddToWatchlist}
-                title={isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
-              >
-                <i className={`${isInWatchlist ? "fa-solid" : "fa-regular"} fa-bookmark btn-icon`}></i>
-                <span className="btn-text">
-                  {isInWatchlist ? "In Watchlist" : "Add to Watchlist"}
-                </span>
-              </button>
-              <button
-                className={`action-btn favorite-btn ${isFavorite ? "active" : ""}`}
-                onClick={handleAddToFavorites}
-                title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-              >
-                <i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart btn-icon`}></i>
-                <span className="btn-text black">
-                  {isFavorite ? "Liked" : "Add to Favorites"}
-                </span>
-              </button>
+              <div className="action-btn-wrapper" onClick={!user ? handleDisabledWatchlistClick : undefined}>
+                <button
+                  className={`action-btn watchlist-btn ${isInWatchlist(parseInt(movieId)) ? "active" : ""}`}
+                  onClick={handleAddToWatchlist}
+                  disabled={!user}
+                >
+                  <i className={`${isInWatchlist(parseInt(movieId)) ? "fa-solid" : "fa-regular"} fa-bookmark btn-icon`}></i>
+                  <span className="btn-text">
+                    {isInWatchlist(parseInt(movieId)) ? "In Watchlist" : "Add to Watchlist"}
+                  </span>
+                </button>
+                {!user && <span className="custom-tooltip">Sign in to Add to Watchlist</span>}
+              </div>
+              <div className="action-btn-wrapper" onClick={!user ? handleDisabledFavoritesClick : undefined}>
+                <button
+                  className={`action-btn favorite-btn ${isFavorite(parseInt(movieId)) ? "active" : ""}`}
+                  onClick={handleAddToFavorites}
+                  disabled={!user}
+                >
+                  <i className={`${isFavorite(parseInt(movieId)) ? "fa-solid" : "fa-regular"} fa-heart btn-icon`}></i>
+                  <span className="btn-text black">
+                    {isFavorite(parseInt(movieId)) ? "Liked" : "Add to Favorites"}
+                  </span>
+                </button>
+                {!user && <span className="custom-tooltip">Sign in to Add to Favorites</span>}
+              </div>
             </div>
+
+            {toast.show && (
+              <div className="auth-toast">
+                <i className="fa-solid fa-circle-info toast-icon"></i>
+                <span>{toast.message}</span>
+              </div>
+            )}
 
             <div className="basic-info">
               <div className="info-item">
