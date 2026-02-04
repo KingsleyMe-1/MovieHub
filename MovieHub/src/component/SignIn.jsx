@@ -64,9 +64,6 @@ const SignIn = () => {
     <div className="signin-page">
       <div className="signin-container">
         <div className="signin-header">
-          <h1 className="app-logo" onClick={() => navigate("/")}>
-            🎬 MovieHub
-          </h1>
           <h2>{isSignUp ? "Create Account" : "Welcome Back"}</h2>
           <p className="signin-subtitle">
             {isSignUp
