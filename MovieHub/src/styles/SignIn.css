@@ -21,18 +21,6 @@
   margin-bottom: 30px;
 }
 
-.app-logo {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.app-logo:hover {
-  transform: scale(1.05);
-}
-
 .signin-header h2 {
   font-size: 1.8rem;
   color: #333;
@@ -136,24 +124,6 @@
   color: #764ba2;
 }
 
-.demo-info {
-  background: #f0f4ff;
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 20px;
-  text-align: center;
-}
-
-.demo-note {
-  color: #5568d3;
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-.demo-note strong {
-  font-weight: 700;
-}
-
 @media (max-width: 480px) {
   .signin-container {
     padding: 30px 20px;
@@ -161,9 +131,5 @@
 
   .signin-header h2 {
     font-size: 1.5rem;
-  }
-
-  .app-logo {
-    font-size: 2rem;
   }
 }
