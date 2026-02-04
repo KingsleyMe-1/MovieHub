@@ -132,12 +132,6 @@ const SignIn = () => {
             </button>
           </p>
         </div>
-
-        <div className="demo-info">
-          <p className="demo-note">
-            <strong>Demo Mode:</strong> Use any email and password to sign in
-          </p>
-        </div>
       </div>
     </div>
   );
