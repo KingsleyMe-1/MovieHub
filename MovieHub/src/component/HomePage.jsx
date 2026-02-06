@@ -62,7 +62,7 @@ const HomePage = () => {
         setErrorMessage("Failed to fetch allMovies");
         console.error("Error fetching allMovies:", error);
       } finally {
-        setLoadingMovies(true);
+        setLoadingMovies(false);
       }
     };
     fetchMovies(searchTerm);
@@ -117,7 +117,7 @@ const HomePage = () => {
         setErrorMessage("Failed to fetch trending movies");
         console.error("Error fetching trending movies:", error);
       } finally {
-        setLoadingTrending(true);
+        setLoadingTrending(false);
       }
     };
     fetchTrendingMovies();
