@@ -3,17 +3,50 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+  background: #030014;
+  position: relative;
+  overflow: hidden;
+}
+
+.signin-background-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/hero-bg.png");
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.4);
+  z-index: 0;
+}
+
+.signin-background-pattern::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.3) 0%,
+    rgba(118, 75, 162, 0.3) 100%
+  );
 }
 
 .signin-container {
-  background: white;
+  background: rgba(15, 13, 35, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(206, 206, 251, 0.2);
   border-radius: 16px;
   padding: 40px;
   width: 100%;
   max-width: 450px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
 }
 
 .signin-header {
@@ -23,23 +56,25 @@
 
 .signin-header h2 {
   font-size: 1.8rem;
-  color: #333;
+  color: #ffffff;
   margin-bottom: 8px;
+  font-weight: 700;
 }
 
 .signin-subtitle {
-  color: #666;
+  color: #a8b5db;
   font-size: 0.95rem;
 }
 
 .error-message {
-  background: #fee;
-  color: #c33;
+  background: rgba(220, 38, 38, 0.1);
+  color: #fca5a5;
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 20px;
   font-size: 0.9rem;
-  border-left: 4px solid #c33;
+  border-left: 4px solid #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.3);
 }
 
 .signin-form {
@@ -56,22 +91,29 @@
 
 .form-group label {
   font-weight: 600;
-  color: #333;
+  color: #cecefb;
   font-size: 0.95rem;
 }
 
 .form-group input {
   padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid rgba(206, 206, 251, 0.2);
   border-radius: 8px;
   font-size: 1rem;
+  background: rgba(15, 13, 35, 0.6);
+  color: #ffffff;
   transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input::placeholder {
+  color: #9ca4ab;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: rgba(15, 13, 35, 0.8);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
 .signin-btn {
@@ -100,11 +142,11 @@
   text-align: center;
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid rgba(206, 206, 251, 0.2);
 }
 
 .signin-footer p {
-  color: #666;
+  color: #a8b5db;
   font-size: 0.95rem;
 }
 

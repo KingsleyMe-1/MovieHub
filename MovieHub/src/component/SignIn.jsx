@@ -62,6 +62,7 @@ const SignIn = () => {
 
   return (
     <div className="signin-page">
+      <div className="signin-background-pattern"></div>
       <div className="signin-container">
         <div className="signin-header">
           <h2>{isSignUp ? "Create Account" : "Welcome Back"}</h2>
