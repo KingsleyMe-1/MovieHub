@@ -117,7 +117,7 @@ const HomePage = () => {
         setErrorMessage("Failed to fetch trending movies");
         console.error("Error fetching trending movies:", error);
       } finally {
-        setLoadingTrending(true);
+        setLoadingTrending(false);
       }
     };
     fetchTrendingMovies();
