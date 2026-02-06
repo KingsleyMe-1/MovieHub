@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/MovieDetails.css";
 import SimilarMovies from "./SimilarMovies";
+import MovieDetailsLoader from "./MovieDetailsLoader";
 
 const MovieDetails = () => {
   const { movieId } = useParams();
@@ -12,6 +13,10 @@ const MovieDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [toast, setToast] = useState({ show: false, message: "" });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [movieId]);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -51,13 +56,7 @@ const MovieDetails = () => {
   }, [movieId]);
 
   if (loading) {
-    return (
-      <div className="details-page">
-        <div className="loader-container">
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
+    return <MovieDetailsLoader/>
   }
 
   if (error) {
