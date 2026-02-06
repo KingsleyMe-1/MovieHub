@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MovieCard from "./MovieCard";
 import Search from "./Search";
-import Loader from "./Loader";
+import SkeletonLoader from "./Loader";
+import TrendingSkeleton from './TrendingSkeleton'
 import Pagination from "./Pagination";
 import Navbar from "./NavigationBar";
 import "../styles/NavigationBar.css";
@@ -61,7 +62,7 @@ const HomePage = () => {
         setErrorMessage("Failed to fetch allMovies");
         console.error("Error fetching allMovies:", error);
       } finally {
-        setLoadingMovies(false);
+        setLoadingMovies(true);
       }
     };
     fetchMovies(searchTerm);
@@ -116,7 +117,7 @@ const HomePage = () => {
         setErrorMessage("Failed to fetch trending movies");
         console.error("Error fetching trending movies:", error);
       } finally {
-        setLoadingTrending(false);
+        setLoadingTrending(true);
       }
     };
     fetchTrendingMovies();
@@ -169,7 +170,7 @@ const HomePage = () => {
               <h2>Trending Now</h2>
 
               {loadingTrending ? (
-                <Loader />
+                <TrendingSkeleton count={8} />
               ) : errorMessage ? (
                 <p className="text-red-500">{errorMessage}</p>
               ) : (
@@ -201,7 +202,7 @@ const HomePage = () => {
             <h2>{getCategoryTitle()}</h2>
 
             {loadingMovies ? (
-              <Loader />
+              <SkeletonLoader count={12} />
             ) : errorMessage ? (
               <p className="text-red-500">{errorMessage}</p>
             ) : allMovies.length > 0 ? (
