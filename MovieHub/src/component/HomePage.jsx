@@ -22,7 +22,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchMovies = async (query = '', isLoadMore = false) => {
-      if (loadingMore) {
+      if (isLoadMore) {
         setLoadingMore(true);
       } else {
         setLoadingMovies(true);

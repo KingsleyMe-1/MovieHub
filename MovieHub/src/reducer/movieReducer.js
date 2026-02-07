@@ -33,7 +33,7 @@ export const initialState = {
 
 
 //Reducer function
-export const movieReducer = (state, action) => {
+export const movieReducer = (state = initialState, action) => {
     switch (action.type) {
         case ACTIONS.SET_SEARCH_TERM:
             return { ...state, searchTerm: action.payload, currentPage: 1, allMovies: [], hasMore: true };
