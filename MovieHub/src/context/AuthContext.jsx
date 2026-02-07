@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
@@ -14,41 +14,36 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is already logged in (from localStorage)
   useEffect(() => {
-    const storedUser = localStorage.getItem("moviehub_user");
+    const storedUser = localStorage.getItem('moviehub_user');
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error("Error parsing stored user:", error);
-        localStorage.removeItem("moviehub_user");
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('moviehub_user');
       }
     }
     setLoading(false);
   }, []);
 
   const signIn = (email, password) => {
-    // For demo purposes, we'll simulate authentication
-    // In a real app, you'd validate against a backend API
     if (email && password) {
       const userData = {
         id: Date.now(),
         email: email,
-        name: email.split("@")[0],
+        name: email.split('@')[0],
         favorites: [],
         watchlist: [],
       };
       setUser(userData);
-      localStorage.setItem("moviehub_user", JSON.stringify(userData));
+      localStorage.setItem('moviehub_user', JSON.stringify(userData));
       return { success: true };
     }
-    return { success: false, error: "Invalid credentials" };
+    return { success: false, error: 'Invalid credentials' };
   };
 
   const signUp = (name, email, password) => {
-    // For demo purposes, we'll simulate registration
-    // In a real app, you'd create an account via backend API
     if (name && email && password) {
       const userData = {
         id: Date.now(),
@@ -58,15 +53,15 @@ export const AuthProvider = ({ children }) => {
         watchlist: [],
       };
       setUser(userData);
-      localStorage.setItem("moviehub_user", JSON.stringify(userData));
+      localStorage.setItem('moviehub_user', JSON.stringify(userData));
       return { success: true };
     }
-    return { success: false, error: "All fields are required" };
+    return { success: false, error: 'All fields are required' };
   };
 
   const signOut = () => {
     setUser(null);
-    localStorage.removeItem("moviehub_user");
+    localStorage.removeItem('moviehub_user');
   };
 
   const addToFavorites = (movieId) => {
@@ -78,7 +73,7 @@ export const AuthProvider = ({ children }) => {
           : [...user.favorites, movieId],
       };
       setUser(updatedUser);
-      localStorage.setItem("moviehub_user", JSON.stringify(updatedUser));
+      localStorage.setItem('moviehub_user', JSON.stringify(updatedUser));
     }
   };
 
@@ -91,7 +86,7 @@ export const AuthProvider = ({ children }) => {
           : [...user.watchlist, movieId],
       };
       setUser(updatedUser);
-      localStorage.setItem("moviehub_user", JSON.stringify(updatedUser));
+      localStorage.setItem('moviehub_user', JSON.stringify(updatedUser));
     }
   };
 

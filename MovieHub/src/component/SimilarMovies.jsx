@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import MovieCard from "./MovieCard";
-import Loader from "./Loader";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import MovieCard from './MovieCard';
+import Loader from './Loader';
 
 const SimilarMovies = ({ movieId }) => {
   const [similarMovies, setSimilarMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,11 +14,11 @@ const SimilarMovies = ({ movieId }) => {
       setLoading(true);
       try {
         const API_KEY = import.meta.env.VITE_API_TMDB_KEY;
-        const API_URL = "https://api.themoviedb.org/3";
+        const API_URL = 'https://api.themoviedb.org/3';
         const API_OPTIONS = {
-          method: "GET",
+          method: 'GET',
           headers: {
-            accept: "application/json",
+            accept: 'application/json',
             Authorization: `Bearer ${API_KEY}`,
           },
         };
@@ -28,14 +28,14 @@ const SimilarMovies = ({ movieId }) => {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error("Failed to fetch similar movies");
+          throw new Error('Failed to fetch similar movies');
         }
 
         setSimilarMovies(data.results || []);
-        setError("");
+        setError('');
       } catch (err) {
-        setError("Failed to fetch similar movies");
-        console.error("Error fetching similar movies:", err);
+        setError('Failed to fetch similar movies');
+        console.error('Error fetching similar movies:', err);
       } finally {
         setLoading(false);
       }
@@ -48,7 +48,7 @@ const SimilarMovies = ({ movieId }) => {
 
   if (loading) {
     return (
-      <div className="similar-movies-section">
+      <div className='similar-movies-section'>
         <h2>Similar Movies</h2>
         <Loader />
       </div>
@@ -60,9 +60,9 @@ const SimilarMovies = ({ movieId }) => {
   }
 
   return (
-    <div className="similar-movies-section">
+    <div className='similar-movies-section'>
       <h2>Similar Movies</h2>
-      <div className="movies-grid">
+      <div className='movies-grid'>
         {similarMovies
           .filter((movie) => movie && movie.poster_path)
           .slice(0, 12)
@@ -70,7 +70,7 @@ const SimilarMovies = ({ movieId }) => {
             <div
               key={movie.id}
               onClick={() => navigate(`/movie/${movie.id}`)}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
             >
               <MovieCard movie={movie} />
             </div>

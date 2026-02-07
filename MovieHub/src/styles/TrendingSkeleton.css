@@ -1,50 +1,43 @@
 @keyframes pulse {
-    0%,
-    100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
-
 
 @keyframes shimmer_trending {
-    0% {
-        background-position: -200px 0;
-    }
-    100% {
-        background-position: 200px 0;
-    }
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
 }
-
 
 .skeleton-number {
-    color: rgba(206, 206, 251, 0.2);
-    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  color: rgba(206, 206, 251, 0.2);
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.skeleton-trending-poster{
-    width: 127px;
-    height: 163px;
-    border-radius: 0.5rem;
-    background: linear-gradient(
-        90deg,
-        #0f0d23 25%,
-        #1a1733 50%,
-        #0f0d23 75%
-    );
-    background-size: 400px 100%;
-    animation: shimmer_trending 1.5s ease-in-out infinite;
+.skeleton-trending-poster {
+  width: 127px;
+  height: 163px;
+  border-radius: 0.5rem;
+  background: linear-gradient(90deg, #0f0d23 25%, #1a1733 50%, #0f0d23 75%);
+  background-size: 400px 100%;
+  animation: shimmer_trending 1.5s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .skeleton-number,
-    .skeleton-trending-poster{
-        animation: none;
-    }
+  .skeleton-number,
+  .skeleton-trending-poster {
+    animation: none;
+  }
 
-    .skeleton-trending-poster {
-        background: #0f0d23;
-    }
+  .skeleton-trending-poster {
+    background: #0f0d23;
+  }
 }
