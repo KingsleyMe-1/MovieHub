@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MovieCard from "./MovieCard";
-import Search from "./Search";
 import SkeletonLoader from "./Loader";
 import TrendingSkeleton from './TrendingSkeleton'
 import Pagination from "./Pagination";
@@ -39,7 +38,6 @@ const HomePage = () => {
         if (query) {
           endpoint = `${API_URL}/search/movie?query=${encodeURIComponent(query)}&page=${currentPage}`;
         } else {
-          // Map category to API endpoint
           const categoryEndpoints = {
             popular: `${API_URL}/movie/popular?page=${currentPage}`,
             now_playing: `${API_URL}/movie/now_playing?page=${currentPage}`,
@@ -85,7 +83,7 @@ const HomePage = () => {
 
   const handleCategoryChange = (newCategory) => {
     setCategory(newCategory);
-    setSearchTerm(""); // Clear search when changing category
+    setSearchTerm("");
     setCurrentPage(1);
   };
 
@@ -141,7 +139,6 @@ const HomePage = () => {
     <main>
       <Navbar onSearch={handleSearch} />
       
-      {/* Category Tabs */}
       <div className="category-tabs-wrapper">
         <div className="category-tabs">
           {[

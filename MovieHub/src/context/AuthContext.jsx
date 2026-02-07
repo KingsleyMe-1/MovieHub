@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is already logged in (from localStorage)
   useEffect(() => {
     const storedUser = localStorage.getItem("moviehub_user");
     if (storedUser) {
@@ -29,8 +28,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signIn = (email, password) => {
-    // For demo purposes, we'll simulate authentication
-    // In a real app, you'd validate against a backend API
     if (email && password) {
       const userData = {
         id: Date.now(),
@@ -47,8 +44,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signUp = (name, email, password) => {
-    // For demo purposes, we'll simulate registration
-    // In a real app, you'd create an account via backend API
     if (name && email && password) {
       const userData = {
         id: Date.now(),

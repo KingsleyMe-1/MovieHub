@@ -136,7 +136,6 @@ const MovieDetails = () => {
         ← Back
       </button>
 
-      {/* Backdrop */}
       {backdrop_path && (
         <div className="movie-backdrop">
           <img
@@ -148,7 +147,6 @@ const MovieDetails = () => {
       )}
 
       <div className="details-container">
-        {/* Poster and Basic Info */}
         <div className="details-header">
           {poster_path && (
             <div className="poster-section">
@@ -256,13 +254,11 @@ const MovieDetails = () => {
           </div>
         </div>
 
-        {/* Overview */}
         <div className="overview-section">
           <h2>Overview</h2>
           <p>{overview || "No overview available."}</p>
         </div>
 
-        {/* Trailer Video */}
         {trailer && (
           <div className="trailer-section">
             <div className="video-container">
@@ -277,7 +273,6 @@ const MovieDetails = () => {
           </div>
         )}
 
-        {/* Budget and Revenue */}
         {(budget > 0 || revenue > 0) && (
           <div className="financial-section">
             <h2>Production Details</h2>
@@ -300,7 +295,6 @@ const MovieDetails = () => {
           </div>
         )}
 
-        {/* Cast */}
         {cast && cast.length > 0 && (
           <div className="cast-section">
             <h2>Cast</h2>
@@ -333,7 +327,6 @@ const MovieDetails = () => {
           </div>
         )}
 
-        {/* Reviews */}
         {reviews && reviews.results && reviews.results.length > 0 && (
           <div className="reviews-section">
             <h2>Top Review</h2>
@@ -361,7 +354,6 @@ const MovieDetails = () => {
           </div>
         )}
 
-        {/* Similar Movies */}
         <SimilarMovies movieId={movieId} />
       </div>
     </div>

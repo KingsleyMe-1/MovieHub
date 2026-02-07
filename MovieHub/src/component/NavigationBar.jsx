@@ -45,7 +45,6 @@ const NavigationBar = ({ onSearch }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Logo Section */}
         <button type="button" className="navbar-logo" onClick={handleLogoClick} aria-label="MovieHub - Go to Homepage">
           <svg
             className="navbar-logo-icon"
@@ -59,7 +58,6 @@ const NavigationBar = ({ onSearch }) => {
           <span className="navbar-brand">MovieHub</span>
         </button>
 
-        {/* Search Bar */}
         <div className="navbar-search">
           <form onSubmit={handleSearchSubmit}>
             <div className="navbar-search-wrapper">
@@ -91,7 +89,6 @@ const NavigationBar = ({ onSearch }) => {
           </form>
         </div>
 
-        {/* Hamburger Menu Button (Mobile Only) */}
         <button 
           type="button"
           className="navbar-hamburger"
@@ -103,7 +100,6 @@ const NavigationBar = ({ onSearch }) => {
           </svg>
         </button>
 
-        {/* Right Section (Desktop) */}
         <div className="navbar-actions">
           <a
             href="https://github.com/KingsleyMe-1/MovieHub"
@@ -136,12 +132,10 @@ const NavigationBar = ({ onSearch }) => {
         </div>
       </div>
 
-      {/* Sidebar Overlay */}
       {isSidebarOpen && (
         <div className="sidebar-overlay" onClick={closeSidebar}></div>
       )}
 
-      {/* Sidebar */}
       <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <button 
           type="button"
