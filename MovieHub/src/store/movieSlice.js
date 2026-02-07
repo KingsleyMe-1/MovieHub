@@ -80,3 +80,77 @@ const initialState = {
 };
 
 //Create Slice
+const moviesSlice = createSlice({
+  name: 'movies',
+  initialState,
+  reducers: {
+    setSearchTerm(state, action) {
+      state.searchTerm = action.payload;
+      state.currentPage = 1;
+      state.allMovies = [];
+      state.hasMore = true;
+    },
+    setCategory(state, action) {
+      state.category = action.payload;
+      state.searchTerm = '';
+      state.currentPage = 1;
+      state.allMovies = [];
+      state.hasMore = true;
+    },
+    incrementPage(state) {
+      state.currentPage += 1;
+    },
+    resetPagination(state) {
+      state.currentPage = 1;
+      state.allMovies = [];
+      state.hasMore = true;
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchMovies.pending, (state, action) => {
+        const isLoadMore = action.payload.page > 1;
+        if (isLoadMore) {
+          state.loadingMore = true;
+        } else {
+          state.loadingMovies = true;
+        }
+        state.errorMessage = '';
+      })
+      .addCase(fetchMovies.fulfilled, (state, action) => {
+        const isLoadMore = action.payload.currentPage > 1;
+
+        if (isLoadMore) {
+          state.allMovies = [...state.allMovies, ...action.payload.movies];
+        } else {
+          state.allMovies = action.payload.movies;
+        }
+
+        state.hasMore = action.payload.currentPage < action.payload.totalPages;
+        state.loadingMovies = false;
+        state.loadingMore = false;
+        state.errorMessage = '';
+      })
+      .addCase(fetchMovies.rejected, (state, action) => {
+        state.loadingMovies = false;
+        state.loadingMore = false;
+        state.errorMessage = action.payload || 'Failed to fetch movies';
+      })
+      .addCase(fetchTrendingMovies.pending, (state) => {
+        state.loadingTrending = true;
+        state.errorMessage = '';
+      })
+      .addCase(fetchTrendingMovies.fulfilled, (state, action) => {
+        state.trendingMovies = action.payload;
+        state.loadingTrending = false;
+        state.errorMessage = '';
+      })
+      .addCase(fetchTrendingMovies.rejected, (state, action) => {
+        state.loadingTrending = false;
+        state.errorMessage = action.payload || 'Failed to fetch trending movies';
+      });
+    },
+});
+
+export const { setSearchTerm, setCategory, incrementPage, resetPagination } = moviesSlice.actions;
+export default moviesSlice.reducer;
