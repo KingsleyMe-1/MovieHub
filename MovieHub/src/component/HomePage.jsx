@@ -1,5 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  fetchMovies,
+  fetchTrendingMovies,
+  setSearchTerm,
+  setCategory,
+  incrementPage,
+} from '../store/movieSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import MovieCard from './MovieCard';
 import SkeletonLoader from './Loader';
 import TrendingSkeleton from './TrendingSkeleton';
@@ -7,88 +15,35 @@ import Navbar from './NavigationBar';
 import '../styles/NavigationBar.css';
 
 const HomePage = () => {
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [allMovies, setAllMovies] = React.useState([]);
-  const [trendingMovies, setTrendingMovies] = React.useState([]);
-  const [loadingMovies, setLoadingMovies] = React.useState(false);
-  const [loadingTrending, setLoadingTrending] = React.useState(false);
-  const [loadingMore, setLoadingMore] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [category, setCategory] = React.useState('popular');
-  const [hasMore, setHasMore] = React.useState(true);
+  const dispatch = useDispatch();
+  const {
+    searchTerm,
+    allMovies,
+    trendingMovies,
+    loadingMovies,
+    loadingMore,
+    loadingTrending,
+    currentPage,
+    category,
+    hasMore,
+    errorMessage,
+  } = useSelector((state) => state.movies);
   const observerTarget = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchMovies = async (query = '', isLoadMore = false) => {
-      if (loadingMore) {
-        setLoadingMore(true);
-      } else {
-        setLoadingMovies(true);
-      }
-      try {
-        const API_KEY = import.meta.env.VITE_API_TMDB_KEY;
-        const API_URL = 'https://api.themoviedb.org/3';
-        const API_OPTIONS = {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_KEY}`,
-          },
-        };
-
-        let endpoint;
-
-        if (query) {
-          endpoint = `${API_URL}/search/movie?query=${encodeURIComponent(query)}&page=${currentPage}`;
-        } else {
-          const categoryEndpoints = {
-            popular: `${API_URL}/movie/popular?page=${currentPage}`,
-            now_playing: `${API_URL}/movie/now_playing?page=${currentPage}`,
-            top_rated: `${API_URL}/movie/top_rated?page=${currentPage}`,
-            upcoming: `${API_URL}/movie/upcoming?page=${currentPage}`,
-          };
-          endpoint = categoryEndpoints[category] || categoryEndpoints.popular;
-        }
-
-        const response = await fetch(endpoint, API_OPTIONS);
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        if (isLoadMore && currentPage > 1) {
-          setAllMovies((prevMovies) => [...prevMovies, ...data.results]);
-        } else {
-          setAllMovies(data.results);
-        }
-
-        setHasMore(currentPage < (data.total_pages || 1));
-        setErrorMessage('');
-      } catch (error) {
-        setErrorMessage('Failed to fetch allMovies');
-        console.error('Error fetching allMovies:', error);
-      } finally {
-        setLoadingMovies(false);
-        setLoadingMore(false);
-      }
-    };
-    const isLoadMore = currentPage > 1;
-    fetchMovies(searchTerm, isLoadMore);
-  }, [searchTerm, currentPage, category]);
+    dispatch(fetchMovies({ searchTerm, page: currentPage, category }));
+  }, [dispatch, searchTerm, currentPage, category]);
 
   useEffect(() => {
-    setCurrentPage(1);
-    setAllMovies([]);
-    setHasMore(true);
+    dispatch(fetchTrendingMovies());
   }, [searchTerm]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !loadingMore && !loadingMovies) {
-          setCurrentPage((prevPage) => prevPage + 1);
+          dispatch(incrementPage());
         }
       },
       { threshold: 0.1 }
@@ -104,50 +59,15 @@ const HomePage = () => {
         observer.unobserve(currentTarget);
       }
     };
-  }, [hasMore, loadingMore, loadingMovies]);
+  }, [dispatch, hasMore, loadingMore, loadingMovies]);
 
   const handleSearch = (term) => {
-    setSearchTerm(term);
+    dispatch(setSearchTerm(term));
   };
 
   const handleCategoryChange = (newCategory) => {
-    setCategory(newCategory);
-    setSearchTerm('');
+    dispatch(setCategory(newCategory));
   };
-
-  useEffect(() => {
-    const fetchTrendingMovies = async () => {
-      setLoadingTrending(true);
-      try {
-        const API_KEY = import.meta.env.VITE_API_TMDB_KEY;
-        const API_URL = 'https://api.themoviedb.org/3';
-        const API_OPTIONS = {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_KEY}`,
-          },
-        };
-
-        const listMovies = `${API_URL}/trending/movie/day`;
-
-        const response = await fetch(listMovies, API_OPTIONS);
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        setTrendingMovies(data.results);
-        setErrorMessage('');
-      } catch (error) {
-        setErrorMessage('Failed to fetch trending movies');
-        console.error('Error fetching trending movies:', error);
-      } finally {
-        setLoadingTrending(false);
-      }
-    };
-    fetchTrendingMovies();
-  }, []);
 
   const handleMovieClick = (movieId) => {
     navigate(`/movie/${movieId}`);
