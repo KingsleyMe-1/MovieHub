@@ -109,7 +109,7 @@ const moviesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMovies.pending, (state, action) => {
-        const isLoadMore = action.payload.page > 1;
+        const isLoadMore = action.meta.arg.page > 1;
         if (isLoadMore) {
           state.loadingMore = true;
         } else {
