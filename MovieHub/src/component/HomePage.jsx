@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MovieCard from "./MovieCard";
 import SkeletonLoader from "./Loader";
 import TrendingSkeleton from './TrendingSkeleton'
-import Pagination from "./Pagination";
 import Navbar from "./NavigationBar";
 import "../styles/NavigationBar.css";
 
@@ -13,15 +12,22 @@ const HomePage = () => {
   const [trendingMovies, setTrendingMovies] = React.useState([]);
   const [loadingMovies, setLoadingMovies] = React.useState(false);
   const [loadingTrending, setLoadingTrending] = React.useState(false);
+  const [loadingMore, setLoadingMore] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [totalPages, setTotalPages] = React.useState(1);
   const [category, setCategory] = React.useState("popular");
+  const [hasMore, setHasMore] = React.useState(true);
+  const observerTarget = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchMovies = async (query = "") => {
-      setLoadingMovies(true);
+    const fetchMovies = async (query = "", isLoadMore = false) => {
+      if(loadingMore) {
+        setLoadingMore(true);
+      }
+      else {
+        setLoadingMovies(true);
+      }
       try {
         const API_KEY = import.meta.env.VITE_API_TMDB_KEY;
         const API_URL = "https://api.themoviedb.org/3";
@@ -53,38 +59,61 @@ const HomePage = () => {
           throw new Error("Network response was not ok");
         }
 
-        setAllMovies(data.results);
-        setTotalPages(data.total_pages || 1);
+        if(isLoadMore && currentPage > 1) {
+          setAllMovies((prevMovies) => [...prevMovies, ...data.results]);
+        }else{
+          setAllMovies(data.results);
+        }
+
+        setHasMore(currentPage < (data.total_pages || 1));
         setErrorMessage("");
       } catch (error) {
         setErrorMessage("Failed to fetch allMovies");
         console.error("Error fetching allMovies:", error);
       } finally {
         setLoadingMovies(false);
+        setLoadingMore(false);
       }
     };
-    fetchMovies(searchTerm);
+    const isLoadMore = currentPage > 1;
+    fetchMovies(searchTerm, isLoadMore);
   }, [searchTerm, currentPage, category]);
 
   useEffect(() => {
     setCurrentPage(1);
+    setAllMovies([]);
+    setHasMore(true);
   }, [searchTerm]);
 
-  const handlePageChange = (page) => {
-    const nextPage = Math.max(1, Math.min(page, totalPages));
-    setCurrentPage(nextPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !loadingMovies) {
+          setCurrentPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasMore, loadingMore, loadingMovies])
 
   const handleSearch = (term) => {
-    setCurrentPage(1);
     setSearchTerm(term);
   };
 
   const handleCategoryChange = (newCategory) => {
     setCategory(newCategory);
     setSearchTerm("");
-    setCurrentPage(1);
   };
 
   useEffect(() => {
@@ -198,7 +227,7 @@ const HomePage = () => {
           <section className="all-movies">
             <h2>{getCategoryTitle()}</h2>
 
-            {loadingMovies ? (
+            {loadingMovies && allMovies.length === 0 ? (
               <SkeletonLoader count={12} />
             ) : errorMessage ? (
               <p className="text-red-500">{errorMessage}</p>
@@ -216,12 +245,19 @@ const HomePage = () => {
                     </li> )
                   ))}
                 </ul>
-                {totalPages > 1 && (
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  />
+                
+                {hasMore && (
+                  <div ref={observerTarget} className="loading-more">
+                    {loadingMore && (
+                      <div className="flex justify-center items-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {!hasMore && allMovies.length > 0 && (
+                  <p className="text-green-500 text-center mt-4">No more movies to load.</p>
                 )}
               </>
             ) : (
