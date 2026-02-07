@@ -1,0 +1,157 @@
+.watchlist-container {
+  width: 100%;
+}
+
+.watchlist-header {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.watchlist-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+}
+
+.watchlist-count {
+  color: #9ca4ab;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.empty-watchlist {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  text-align: center;
+  min-height: 400px;
+}
+
+.empty-icon {
+  font-size: 5rem;
+  color: #a8b5db;
+  opacity: 0.5;
+  margin-bottom: 1.5rem;
+}
+
+.empty-icon svg {
+  width: 5rem;
+  height: 5rem;
+}
+
+.empty-watchlist h3 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.empty-watchlist p {
+  color: #9ca4ab;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  max-width: 400px;
+}
+
+.browse-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.875rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.browse-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.browse-btn:active {
+  transform: translateY(0);
+}
+
+.watchlist-item {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.watchlist-item:hover {
+  transform: translateY(-4px);
+}
+
+.watchlist-item:hover .remove-btn {
+  opacity: 1;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.remove-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.remove-btn:hover {
+  background: rgba(239, 68, 68, 0.9);
+  transform: scale(1.1);
+}
+
+.remove-btn:active {
+  transform: scale(0.95);
+}
+
+.error-message {
+  color: #ef4444;
+  text-align: center;
+  padding: 2rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .watchlist-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .empty-icon {
+    font-size: 3.5rem;
+  }
+
+  .empty-watchlist h3 {
+    font-size: 1.25rem;
+  }
+
+  .empty-watchlist p {
+    font-size: 0.875rem;
+  }
+
+  .remove-btn {
+    opacity: 1;
+  }
+}
+

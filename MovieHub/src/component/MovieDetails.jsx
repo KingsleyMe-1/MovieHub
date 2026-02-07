@@ -166,9 +166,13 @@ const MovieDetails = () => {
                   onClick={handleAddToWatchlist}
                   disabled={!user}
                 >
-                  <i
-                    className={`${isInWatchlist(parseInt(movieId)) ? 'fa-solid' : 'fa-regular'} fa-bookmark btn-icon`}
-                  ></i>
+                  <svg className='btn-icon' viewBox='0 0 24 24' fill='currentColor'>
+                    {isInWatchlist(parseInt(movieId)) ? (
+                      <path d='M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z' />
+                    ) : (
+                      <path d='M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z' />
+                    )}
+                  </svg>
                   <span className='btn-text'>
                     {isInWatchlist(parseInt(movieId)) ? 'In Watchlist' : 'Add to Watchlist'}
                   </span>
@@ -184,9 +188,13 @@ const MovieDetails = () => {
                   onClick={handleAddToFavorites}
                   disabled={!user}
                 >
-                  <i
-                    className={`${isFavorite(parseInt(movieId)) ? 'fa-solid' : 'fa-regular'} fa-heart btn-icon`}
-                  ></i>
+                  <svg className='btn-icon' viewBox='0 0 24 24' fill='currentColor'>
+                    {isFavorite(parseInt(movieId)) ? (
+                      <path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' />
+                    ) : (
+                      <path d='M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z' />
+                    )}
+                  </svg>
                   <span className='btn-text black'>
                     {isFavorite(parseInt(movieId)) ? 'Liked' : 'Add to Favorites'}
                   </span>
@@ -197,7 +205,9 @@ const MovieDetails = () => {
 
             {toast.show && (
               <div className='auth-toast'>
-                <i className='fa-solid fa-circle-info toast-icon'></i>
+                <svg className='toast-icon' viewBox='0 0 24 24' fill='currentColor'>
+                  <path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' />
+                </svg>
                 <span>{toast.message}</span>
               </div>
             )}
@@ -360,3 +370,4 @@ const MovieDetails = () => {
 };
 
 export default MovieDetails;
+

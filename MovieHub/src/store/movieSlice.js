@@ -65,14 +65,49 @@ export const fetchTrendingMovies = createAsyncThunk(
   }
 );
 
+export const fetchWatchlistMovies = createAsyncThunk(
+  'movies/fetchWatchlistMovies',
+  async ( movieIds, { rejectWithValue }) => {
+    try {
+      if (!movieIds || movieIds.length === 0) {
+        return [];
+      }
+
+      const moviePromises = movieIds.map(async (id) => {
+        try {
+          const response = await fetch(`${BASE_URL}/movie/${id}`, API_OPTIONS);
+
+          if (response.ok) {
+            const data = await response.json();
+            return data;
+          }
+
+          return null;
+        }catch (error) {
+          console.error(`Error fetching movie with ID ${movieIds}:`, error);
+          return null;
+        }
+      });
+      
+      const results = await Promise.all(moviePromises);
+      const validMovies = results.filter(movie => movie !== null);
+      return validMovies;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 //Initial state
 const initialState = {
   searchTerm: '',
   allMovies: [],
+  watchlistMovies: [],
   trendingMovies: [],
   loadingMovies: false,
   loadingTrending: false,
   loadingMore: false,
+  loadingWatchlist: false,
   errorMessage: '',
   currentPage: 1,
   category: 'popular',
@@ -104,6 +139,9 @@ const moviesSlice = createSlice({
       state.currentPage = 1;
       state.allMovies = [];
       state.hasMore = true;
+    },
+    clearWatchlist(state) {
+      state.watchlistMovies = [];
     }
   },
   extraReducers: (builder) => {
@@ -148,9 +186,22 @@ const moviesSlice = createSlice({
       .addCase(fetchTrendingMovies.rejected, (state, action) => {
         state.loadingTrending = false;
         state.errorMessage = action.payload || 'Failed to fetch trending movies';
+      })
+      .addCase(fetchWatchlistMovies.pending, (state) => {
+        state.loadingWatchlist = true;
+        state.errorMessage = '';
+      })
+      .addCase(fetchWatchlistMovies.fulfilled, (state, action) => {
+        state.watchlistMovies = action.payload;
+        state.loadingWatchlist = false;
+        state.errorMessage = '';
+      })
+      .addCase(fetchWatchlistMovies.rejected, (state, action) => {
+        state.loadingWatchlist = false;
+        state.errorMessage = action.payload || 'Failed to fetch watchlist movies';
       });
     },
 });
 
-export const { setSearchTerm, setCategory, incrementPage, resetPagination } = moviesSlice.actions;
+export const { setSearchTerm, setCategory, incrementPage, resetPagination, clearWatchlist } = moviesSlice.actions;
 export default moviesSlice.reducer;
