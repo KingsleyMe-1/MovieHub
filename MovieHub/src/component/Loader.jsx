@@ -1,16 +1,16 @@
-import { SkeletonCard } from "./SkeletonCard"
+import { SkeletonCard } from './SkeletonCard';
 
-const SkeletonLoader = ({count = 8}) => {
+const SkeletonLoader = ({ count = 8 }) => {
   return (
     <ul>
-      {Array.from({length: count}).map((_, index) => (
+      {Array.from({ length: count }).map((_, index) => (
         <li key={`skeleton-${index}`}>
-          <SkeletonCard/>
+          <SkeletonCard />
         </li>
       ))}
     </ul>
-  )
-}
+  );
+};
 
 export { SkeletonLoader };
 export default SkeletonLoader;

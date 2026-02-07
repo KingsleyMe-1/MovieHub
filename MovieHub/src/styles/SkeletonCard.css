@@ -1,107 +1,75 @@
 @keyframes shimmer {
-    0% {
-        background-position: -468px 0;
-    }
-    100% {
-        background-position: 468px 0;
-    }
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
 }
 
 .skeleton-card {
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  overflow: hidden;
 }
 
-.skeleton-card::before{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.55),
-        transparent
-    );
+.skeleton-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
 }
 
-.skeleton-poster{
-    width: 100%;
-    height: 300px;
-    background: linear-gradient(
-        90deg,
-        #0f0d23 25%,
-        #1a1733 50%,
-        #0f0d23 75%
-    );
-    background-size: 200% 100%;
-    border-radius: 0.5rem;
-    animation: shimmer 1.5s infinite;
+.skeleton-poster {
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(90deg, #0f0d23 25%, #1a1733 50%, #0f0d23 75%);
+  background-size: 200% 100%;
+  border-radius: 0.5rem;
+  animation: shimmer 1.5s infinite;
 }
 
 .skeleton-title {
-    width: 80%;
-    height: 20px;
-    background: linear-gradient(
-        90deg,
-        #0f0d23 25%,
-        #1a1733 50%,
-        #0f0d23 75%
-    );
-    background-size: 200% 100%;
-    border-radius: 4px;
-    margin: 0.5rem 0;
-    animation: shimmer 1.5s infinite;
+  width: 80%;
+  height: 20px;
+  background: linear-gradient(90deg, #0f0d23 25%, #1a1733 50%, #0f0d23 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  margin: 0.5rem 0;
+  animation: shimmer 1.5s infinite;
 }
 
-
-.skeleton-rating{
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
+.skeleton-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.skeleton-star{
-    width: 16px;
-    height: 16px;
-    background: linear-gradient(
-        90deg,
-        #0f0d23 25%,
-        #1a1733 50%,
-        #0f0d23 75%
-    );
-    background-size: 200% 100%;
-    border-radius: 4px;
-    animation: shimmer 1.5s infinite;
+.skeleton-star {
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(90deg, #0f0d23 25%, #1a1733 50%, #0f0d23 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 1.5s infinite;
 }
-
 
 .skeleton-text-small {
-    width: 32px;
-    height: 16px;
-    background: linear-gradient(
-        90deg,
-        #0f0d23 25%,
-        #1a1733 50%,
-        #0f0d23 75%
-    );
-    background-size: 200% 100%;
-    border-radius: 2px;
-    animation: shimmer 1.5s infinite;
+  width: 32px;
+  height: 16px;
+  background: linear-gradient(90deg, #0f0d23 25%, #1a1733 50%, #0f0d23 75%);
+  background-size: 200% 100%;
+  border-radius: 2px;
+  animation: shimmer 1.5s infinite;
 }
 
-.skeleton-dot{
-    width: 4px;
-    height: 4px;
-    background: linear-gradient(
-        90deg,
-        #0f0d23 25%,
-        #1a1733 50%,
-        #0f0d23 75%
-    );
-    background-size: 200% 100%;
-    border-radius: 50%;
-    animation: shimmer 1.5s infinite;
+.skeleton-dot {
+  width: 4px;
+  height: 4px;
+  background: linear-gradient(90deg, #0f0d23 25%, #1a1733 50%, #0f0d23 75%);
+  background-size: 200% 100%;
+  border-radius: 50%;
+  animation: shimmer 1.5s infinite;
 }
