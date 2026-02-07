@@ -206,13 +206,14 @@ const HomePage = () => {
               <>
                 <ul>
                   {allMovies.map((movie) => (
-                    <li
-                      key={movie.id}
-                      onClick={() => handleMovieClick(movie.id)}
-                      style={{ cursor: "pointer" }}
-                    >
+                      movie.poster_path && (
+                        <li
+                            key={movie.id}
+                            onClick={() => handleMovieClick(movie.id)}
+                            style={{ cursor: "pointer" }}
+                        >
                       <MovieCard movie={movie} />
-                    </li>
+                    </li> )
                   ))}
                 </ul>
                 {totalPages > 1 && (

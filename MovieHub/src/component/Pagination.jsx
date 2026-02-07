@@ -23,7 +23,7 @@ const Pagination = ({
           disabled={currentPage === 1}
           className="flex items-center gap-2 transition hover:text-white disabled:opacity-40 cursor-pointer"
         >
-          ← Previous
+          Previous
         </button>
 
         <div className="hidden sm:flex items-center gap-5">
@@ -57,7 +57,7 @@ const Pagination = ({
           disabled={currentPage === totalPages}
           className="flex items-center gap-2 transition hover:text-white disabled:opacity-40 cursor-pointer"
         >
-          Next →
+          Next
         </button>
         </div>
       </div>
