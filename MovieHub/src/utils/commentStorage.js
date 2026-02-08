@@ -10,7 +10,7 @@ export const getComments = (movieId) => {
     }
 };
 
-const saveComments = (movieId, comments) => {
+export const saveComment = (movieId, comments) => {
     try {
         const allComments = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 
