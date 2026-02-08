@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getComments, saveComment, deleteComment } from '../utils/commentStorage';
 import '../styles/MovieDetails.css';
 import SimilarMovies from './SimilarMovies';
 import MovieDetailsLoader from './MovieDetailsLoader';
@@ -13,9 +14,15 @@ const MovieDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [toast, setToast] = useState({ show: false, message: '' });
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState('');
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Load comments when movie changes
+    const movieComments = getComments(movieId);
+    setComments(movieComments);
   }, [movieId]);
 
   useEffect(() => {
@@ -32,7 +39,7 @@ const MovieDetails = () => {
           },
         };
 
-        const endpoint = `${API_URL}/movie/${movieId}?append_to_response=credits,reviews,videos`;
+        const endpoint = `${API_URL}/movie/${movieId}?append_to_response=credits,videos`;
         const response = await fetch(endpoint, API_OPTIONS);
         const data = await response.json();
 
@@ -90,7 +97,6 @@ const MovieDetails = () => {
     original_language,
     genres,
     credits,
-    reviews,
   } = movieData;
 
   const directorInfo = credits?.crew?.find((person) => person.job === 'Director')?.name;
@@ -126,6 +132,67 @@ const MovieDetails = () => {
       return;
     }
     addToFavorites(parseInt(movieId));
+  };
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!user) {
+      showToast('Please sign in to comment');
+      return;
+    }
+
+    if (!commentText.trim()) {
+      showToast('Comment cannot be empty');
+      return;
+    }
+
+    setIsSubmittingComment(true);
+    
+    try {
+      const newComment = saveComment(movieId, {
+        text: commentText.trim(),
+        userName: user.name,
+        userEmail: user.email,
+      });
+      
+      setComments((prev) => [newComment, ...prev]);
+      setCommentText('');
+      showToast('Comment posted successfully!');
+    } catch (err) {
+      showToast('Failed to post comment');
+      console.error('Error posting comment:', err);
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
+
+  const handleDeleteComment = (commentId) => {
+    if (!user) return;
+
+    const success = deleteComment(movieId, commentId);
+    if (success) {
+      setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+      showToast('Comment deleted');
+    } else {
+      showToast('Failed to delete comment');
+    }
+  };
+
+  const formatCommentDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInMs = now - date;
+    const diffInMinutes = Math.floor(diffInMs / 60000);
+    const diffInHours = Math.floor(diffInMs / 3600000);
+    const diffInDays = Math.floor(diffInMs / 86400000);
+
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   return (
@@ -336,32 +403,73 @@ const MovieDetails = () => {
           </div>
         )}
 
-        {reviews && reviews.results && reviews.results.length > 0 && (
-          <div className='reviews-section'>
-            <h2>Top Review</h2>
-            <div className='review'>
-              <p className='review-author'>
-                <strong>{reviews.results[0].author || 'Anonymous'}</strong>
-              </p>
-              <p className='review-content'>
-                {reviews.results[0].content
-                  ? reviews.results[0].content.substring(0, 300) +
-                    (reviews.results[0].content.length > 300 ? '...' : '')
-                  : 'No review content available.'}
-              </p>
-              {reviews.results[0].url && (
-                <a
-                  href={reviews.results[0].url}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='read-more'
-                >
-                  Read Full Review
-                </a>
-              )}
+        <div className='comments-section'>
+          <h2>User Comments ({comments.length})</h2>
+          
+          <form onSubmit={handleCommentSubmit} className='comment-form'>
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder={user ? 'Share your thoughts about this movie...' : 'Sign in to leave a comment'}
+              className='comment-input'
+              rows='4'
+              maxLength='500'
+              disabled={!user || isSubmittingComment}
+            />
+            <div className='comment-form-footer'>
+              <span className='char-count'>
+                {commentText.length}/500
+              </span>
+              <button
+                type='submit'
+                className='comment-submit-btn'
+                disabled={!user || !commentText.trim() || isSubmittingComment}
+              >
+                {isSubmittingComment ? 'Posting...' : 'Post Comment'}
+              </button>
             </div>
+          </form>
+
+          <div className='comments-list'>
+            {comments.length === 0 ? (
+              <div className='no-comments'>
+                <svg viewBox='0 0 24 24' fill='currentColor' className='no-comments-icon'>
+                  <path d='M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z' />
+                </svg>
+                <p>No comments yet. Be the first to share your thoughts!</p>
+              </div>
+            ) : (
+              comments.map((comment) => (
+                <div key={comment.id} className='comment-item'>
+                  <div className='comment-header'>
+                    <div className='comment-author'>
+                      <svg viewBox='0 0 24 24' fill='currentColor' className='user-icon'>
+                        <path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z' />
+                      </svg>
+                      <div className='comment-user-info'>
+                        <span className='comment-user-name'>{comment.userName}</span>
+                        <span className='comment-timestamp'>{formatCommentDate(comment.timestamp)}</span>
+                      </div>
+                    </div>
+                    {user && user.email === comment.userEmail && (
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className='delete-comment-btn'
+                        aria-label='Delete comment'
+                        title='Delete comment'
+                      >
+                        <svg viewBox='0 0 24 24' fill='currentColor'>
+                          <path d='M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z' />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  <p className='comment-text'>{comment.text}</p>
+                </div>
+              ))
+            )}
           </div>
-        )}
+        </div>
 
         <SimilarMovies movieId={movieId} />
       </div>
@@ -370,4 +478,5 @@ const MovieDetails = () => {
 };
 
 export default MovieDetails;
+
 
