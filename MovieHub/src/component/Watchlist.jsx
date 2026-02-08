@@ -72,7 +72,7 @@ const Watchlist = () => {
             </div>
           ) : (
             <section className='all-movies'>
-              <ul>
+              <ul className='mt-4'>
                 {watchlistMovies.map((movie) => (
                   <li
                     key={movie.id}
