@@ -80,7 +80,6 @@ const NavigationBar = ({ onSearch }) => {
       text = String(text).trim();
 
       setAiMessages((m) => [...m, { from: 'ai', text }]);
-      setAiLoading(false);
     } catch (err) {
       setAiError(String(err.message || err));
       setAiMessages((m) => [...m, { from: 'ai', text: 'Puter.js unavailable or returned an error.' }]);
@@ -376,17 +375,6 @@ const NavigationBar = ({ onSearch }) => {
           </svg>
         </button>
 
-        <button
-          type='button'
-          className='ai-sidebar-close'
-          onClick={closeAi}
-          aria-label='Close AI'
-        >
-          <svg viewBox='0 0 24 24' fill='currentColor'>
-            <path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' />
-          </svg>
-        </button>
-
         <div className='ai-content'>
           <div className='ai-messages'>
             {aiMessages.map((m, idx) => {
@@ -406,7 +394,7 @@ const NavigationBar = ({ onSearch }) => {
               );
             })}
 
-            {aiLoading && !lastAiMessage && (
+            {aiLoading && (
               <div className='ai-message ai-loading'>Thinking...</div>
             )}
 
@@ -416,7 +404,7 @@ const NavigationBar = ({ onSearch }) => {
           <div className='ai-input-row'>
             <input
               type='text'
-              placeholder='Ask the AI about movies (press Enter to send)'
+              placeholder='Ask the AI about movies...'
               value={aiInput}
               onChange={(e) => onAiInputChange(e.target.value)}
               onKeyDown={onAiKeyDown}

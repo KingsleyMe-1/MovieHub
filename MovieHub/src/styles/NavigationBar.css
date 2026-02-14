@@ -813,8 +813,8 @@
 }
 .ai-sidebar, .ai-content { box-sizing: border-box; }
 .ai-messages { overflow-x: hidden; }
-.ai-message { max-width: 100%; word-break: break-word; white-space: pre-wrap; overflow-wrap: anywhere; }
-.ai-message a { color: #93c5fd; text-decoration: underline; word-break: break-word; overflow-wrap: anywhere; }
+.ai-message { max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ai-message a { color: #93c5fd; text-decoration: underline; overflow-wrap: anywhere; }
 .ai-message h2 { margin: 0 0 0.35rem 0; font-size: 1.05rem; color: #ffffff; }
 .ai-message strong { color: #ffffff; }
 .ai-input::placeholder { color: rgba(255,255,255,0.45); }
