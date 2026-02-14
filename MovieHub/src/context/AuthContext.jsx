@@ -159,11 +159,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signOut = () => {
-    puter.auth.signOut();
-    setUser(null);
-    setAuthError(null);
-    setCloudError(null);
+  const signOut = async () => {
+    try {
+      await puter.auth.signOut();
+    } catch (error) {      
+      console.error('Error signing out:', error);
+      setUser(null);
+      setAuthError(null);
+      setCloudError(null);
+    }
   };
 
   const addToFavorites = async (movieId) => {
