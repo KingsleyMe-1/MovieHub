@@ -733,6 +733,7 @@
   opacity: 0.45;
   cursor: not-allowed;
   pointer-events: none;
+  display: none;
 }
 
 /* AI Sidebar */
