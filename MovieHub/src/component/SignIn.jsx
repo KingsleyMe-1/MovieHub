@@ -4,60 +4,21 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/SignIn.css';
 
 const SignIn = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
-  const [error, setError] = useState('');
-  const { signIn, signUp } = useAuth();
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const { signIn, authError } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || '/';
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError('');
-  };
-
-  const handleSubmit = (e) => {
+  const handleSignInWithPuter = async (e) => {
     e.preventDefault();
-    setError('');
-
-    if (isSignUp) {
-      if (!formData.name || !formData.email || !formData.password) {
-        setError('All fields are required');
-        return;
-      }
-      const result = signUp(formData.name, formData.email, formData.password);
-      if (result.success) {
-        navigate(from, { replace: true });
-      } else {
-        setError(result.error || 'Sign up failed');
-      }
-    } else {
-      if (!formData.email || !formData.password) {
-        setError('Email and password are required');
-        return;
-      }
-      const result = signIn(formData.email, formData.password);
-      if (result.success) {
-        navigate(from, { replace: true });
-      } else {
-        setError(result.error || 'Sign in failed');
-      }
+    setIsSigningIn(true);
+    const result = await signIn();
+    setIsSigningIn(false);
+    if (result?.success) {
+      navigate(from, { replace: true });
     }
-  };
-
-  const toggleMode = () => {
-    setIsSignUp(!isSignUp);
-    setError('');
-    setFormData({ name: '', email: '', password: '' });
   };
 
   return (
@@ -65,69 +26,29 @@ const SignIn = () => {
       <div className='signin-background-pattern'></div>
       <div className='signin-container'>
         <div className='signin-header'>
-          <h2>{isSignUp ? 'Create Account' : 'Welcome Back'}</h2>
+          <h2>Welcome to MovieHub</h2>
           <p className='signin-subtitle'>
-            {isSignUp
-              ? 'Sign up to save your favorite movies and watchlist'
-              : 'Sign in to access your favorites and watchlist'}
+            Sign in with your Puter account to save favorites and manage your watchlist
           </p>
         </div>
 
-        {error && <div className='error-message'>{error}</div>}
+        {authError && <div className='error-message'>{authError}</div>}
 
-        <form onSubmit={handleSubmit} className='signin-form'>
-          {isSignUp && (
-            <div className='form-group'>
-              <label htmlFor='name'>Name</label>
-              <input
-                type='text'
-                id='name'
-                name='name'
-                value={formData.name}
-                onChange={handleChange}
-                placeholder='Enter your name'
-                required={isSignUp}
-              />
-            </div>
-          )}
-
-          <div className='form-group'>
-            <label htmlFor='email'>Email</label>
-            <input
-              type='email'
-              id='email'
-              name='email'
-              value={formData.email}
-              onChange={handleChange}
-              placeholder='Enter your email'
-              required
-            />
-          </div>
-
-          <div className='form-group'>
-            <label htmlFor='password'>Password</label>
-            <input
-              type='password'
-              id='password'
-              name='password'
-              value={formData.password}
-              onChange={handleChange}
-              placeholder='Enter your password'
-              required
-            />
-          </div>
-
-          <button type='submit' className='signin-btn'>
-            {isSignUp ? 'Sign Up' : 'Sign In'}
+        <form onSubmit={handleSignInWithPuter} className='signin-form'>
+          <button
+            type='submit'
+            className='signin-btn signin-btn-puter'
+            disabled={isSigningIn}
+            aria-busy={isSigningIn}
+          >
+            {isSigningIn ? 'Signing in…' : 'Sign in with Puter'}
           </button>
         </form>
 
         <div className='signin-footer'>
-          <p>
-            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-            <button onClick={toggleMode} className='toggle-btn'>
-              {isSignUp ? 'Sign In' : 'Sign Up'}
-            </button>
+          <p className='signin-footer-text'>
+            A secure Puter window will open to sign in or create an account. Your Puter account
+            powers your MovieHub profile.
           </p>
         </div>
       </div>
