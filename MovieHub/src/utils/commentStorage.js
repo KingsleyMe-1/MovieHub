@@ -18,9 +18,13 @@ export const saveComment = (movieId, comments) => {
             allComments[movieId] = [];
         }
 
+        // Store only non-sensitive identifiers: userName (display) and userUuid (ownership).
+        // Do not store email or other PII in localStorage to reduce breach risk.
         const newComment = {
             id: Date.now(),
-            ...comments,
+            text: comments.text,
+            userName: comments.userName,
+            userUuid: comments.userUuid,
             timestamp: new Date().toISOString()
         };
 

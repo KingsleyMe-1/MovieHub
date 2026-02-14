@@ -153,7 +153,7 @@ const MovieDetails = () => {
       const newComment = saveComment(movieId, {
         text: commentText.trim(),
         userName: user.name,
-        userEmail: user.email,
+        userUuid: user.uuid,
       });
       
       setComments((prev) => [newComment, ...prev]);
@@ -451,7 +451,7 @@ const MovieDetails = () => {
                         <span className='comment-timestamp'>{formatCommentDate(comment.timestamp)}</span>
                       </div>
                     </div>
-                    {user && user.email === comment.userEmail && (
+                    {user && (comment.userUuid === user.uuid || comment.userEmail === user.email) && (
                       <button
                         onClick={() => handleDeleteComment(comment.id)}
                         className='delete-comment-btn'

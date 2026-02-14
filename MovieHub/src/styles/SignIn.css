@@ -138,6 +138,23 @@
   transform: translateY(0);
 }
 
+.signin-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.signin-btn-puter {
+  width: 100%;
+}
+
+.signin-footer-text {
+  color: #a8b5db;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
 .signin-footer {
   text-align: center;
   margin-top: 24px;
