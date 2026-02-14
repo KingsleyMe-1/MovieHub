@@ -208,3 +208,18 @@ This project is open source and available under the [MIT License](LICENSE).
 
 Made with ❤️ by [KingsleyMe-1](https://github.com/KingsleyMe-1)
 
+## 🤖 Puter.js AI Assistant
+
+This project includes an in-app AI assistant integrated with the Puter.js client library (`@heyputer/puter.js`). The assistant appears as an AI button in the navigation bar and opens a right-hand sidebar for chat-style prompts and responses.
+
+- Where the code lives: `src/component/NavigationBar.jsx` (UI + chat logic), `src/context/AuthContext.jsx` (Puter auth integration), and `src/styles/NavigationBar.css` (styling + themed scrollbar).
+- How to use: Sign in via the app (Puter auth). Click the AI button beside the hamburger icon to open the AI sidebar, type a prompt, and press Enter to send. Responses render in the sidebar (supports **bold**, `##` headings and clickable links).
+- Implementation notes:
+  - The assistant uses the Puter client and calls `puter.ai.chat(prompt, options)` (the code prefers lightweight models such as `gpt-5-nano` or `openai/gpt-5.2-chat` depending on your configuration).
+  - The app extracts the assistant `content` field from driver responses (for example `result.result.message.content`) and displays only that text in the UI.
+  - If available, the code also calls `puter.print(text)` to mirror the response inside Puter's UI surface.
+  - The AI button is disabled and visually indicated when a user is not signed in; Puter auth is required for `puter.ai.chat` to work.
+- Debugging: In development builds the raw Puter response is logged to the console to help diagnose any response-shape differences.
+
+Note: Puter auth/session is handled client-side by the app. If your Puter setup requires build-time keys or special configuration, ensure those values are provided at build time (Vite `VITE_*` env variables when building inside Docker or CI). The Dockerfile in this repo performs a production build and serves the static output with nginx.
+
