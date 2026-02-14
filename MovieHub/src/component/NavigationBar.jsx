@@ -107,10 +107,6 @@ const NavigationBar = ({ onSearch }) => {
     }
   };
 
-  useEffect(() => {
-    adjustAiInputHeight();
-  }, [aiInput]);
-
   const closeSidebar = () => {
     setIsSidebarOpen(false);
   };
