@@ -793,6 +793,7 @@
   background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(59,130,246,0.08));
   border: 1px solid rgba(59,130,246,0.15);
   color: #cfe8ff;
+  margin-left: 65px;
 }
 .ai-message.ai {
   align-self: flex-start;
@@ -811,6 +812,15 @@
   background: rgba(255,255,255,0.02);
   color: #fff;
   outline: none;
+  min-height: 40px;
+  max-height: 240px;
+  resize: none;
+  overflow: hidden;
+  line-height: 1.4;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: anywhere;
 }
 .ai-sidebar, .ai-content { box-sizing: border-box; }
 .ai-messages { overflow-x: hidden; }

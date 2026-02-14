@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/NavigationBar.css';
@@ -49,10 +49,8 @@ const NavigationBar = ({ onSearch }) => {
     if (!prompt || !prompt.trim()) return;
     setAiLoading(true);
     setAiError('');
-    // add user message
     setAiMessages((m) => [...m, { from: 'user', text: prompt }]);
     try {
-      // require user to be signed in to Puter for ai.chat
       if (!puter?.auth || !puter.auth.isSignedIn || !puter.auth.isSignedIn()) {
         setAiError('Please sign in to Puter to use the AI assistant.');
         setAiLoading(false);
@@ -88,6 +86,18 @@ const NavigationBar = ({ onSearch }) => {
     }
   };
 
+  const aiInputRef = useRef(null);
+
+  const adjustAiInputHeight = () => {
+    const el = aiInputRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    const scroll = el.scrollHeight;
+    const max = 240; // px
+    el.style.height = `${Math.min(scroll, max)}px`;
+    el.style.overflowY = scroll > max ? 'auto' : 'hidden';
+  };
+
   const onAiInputChange = (value) => {
     setAiInput(value);
   };
@@ -102,6 +112,10 @@ const NavigationBar = ({ onSearch }) => {
       }
     }
   };
+
+  useEffect(() => {
+    adjustAiInputHeight();
+  }, [aiInput]);
 
   const escapeHtml = (str) =>
     String(str)
@@ -402,14 +416,16 @@ const NavigationBar = ({ onSearch }) => {
           </div>
 
           <div className='ai-input-row'>
-            <input
-              type='text'
+            <textarea
+              ref={aiInputRef}
+              rows={1}
               placeholder='Ask the AI about movies...'
               value={aiInput}
               onChange={(e) => onAiInputChange(e.target.value)}
               onKeyDown={onAiKeyDown}
               className='ai-input'
               aria-label='AI chat input'
+              spellCheck={false}
             />
           </div>
         </div>
