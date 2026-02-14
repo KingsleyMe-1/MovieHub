@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/NavigationBar.css';
@@ -23,6 +23,7 @@ const NavigationBar = ({ onSearch }) => {
   const [aiMessages, setAiMessages] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+  const aiInputRef = useRef(null);
 
   const toggleAi = () => {
     setIsAiOpen((s) => !s);
@@ -94,22 +95,40 @@ const NavigationBar = ({ onSearch }) => {
 
   const onAiInputChange = (value) => {
     setAiInput(value);
+    // adjust height on input change
+    try {
+      if (aiInputRef?.current) {
+        const el = aiInputRef.current;
+        el.style.height = 'auto';
+        const newHeight = Math.min(el.scrollHeight, 240);
+        el.style.height = newHeight + 'px';
+        el.style.overflowY = el.scrollHeight > 240 ? 'auto' : 'hidden';
+      }
+    } catch (e) {
+      // ignore
+    }
   };
 
   const onAiKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    // Send on Enter (Shift+Enter for newline)
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       const prompt = aiInput?.trim();
       if (prompt) {
         sendToPuter(prompt);
         setAiInput('');
+        // reset height after clearing
+        setTimeout(() => {
+          try {
+            if (aiInputRef?.current) {
+              aiInputRef.current.style.height = 'auto';
+              aiInputRef.current.style.overflowY = 'hidden';
+            }
+          } catch (err) {}
+        }, 0);
       }
     }
   };
-
-  useEffect(() => {
-    adjustAiInputHeight();
-  }, [aiInput]);
 
   const closeSidebar = () => {
     setIsSidebarOpen(false);
@@ -383,8 +402,9 @@ const NavigationBar = ({ onSearch }) => {
           </div>
 
           <div className='ai-input-row'>
-            <input
-              type='text'
+            <textarea
+              ref={aiInputRef}
+              rows={1}
               placeholder='Ask the AI about movies...'
               value={aiInput}
               onChange={(e) => onAiInputChange(e.target.value)}
