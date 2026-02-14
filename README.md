@@ -204,6 +204,9 @@ This project is open source and available under the [MIT License](LICENSE).
 - [Vite](https://vitejs.dev/) for the fast build tool
 - [TailwindCSS](https://tailwindcss.com/) for the utility-first CSS framework
 
+- <img width="1901" height="1039" alt="image" src="https://github.com/user-attachments/assets/865411ec-c659-436c-a9b7-8a304a558b2f" />
+
+
 ---
 
 Made with ❤️ by [KingsleyMe-1](https://github.com/KingsleyMe-1)
