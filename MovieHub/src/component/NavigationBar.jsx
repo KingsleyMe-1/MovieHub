@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/NavigationBar.css';
 import puter from '@heyputer/puter.js';
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github.css";
 
 const NavigationBar = ({ onSearch }) => {
   const [searchInput, setSearchInput] = useState('');
@@ -103,31 +107,9 @@ const NavigationBar = ({ onSearch }) => {
     }
   };
 
-  const escapeHtml = (str) =>
-    String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-  const renderMarkdownToHtml = (text) => {
-    if (!text) return '';
-    let s = escapeHtml(text);
-    s = s.replace(/^##\s*(.+)$/gm, '<h2>$1</h2>');
-    s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-    s = s.replace(/ {2}\n/g, '<br/>');
-    s = s.replace(/\n/g, '<br/>');
-    return s;
-  };
-
-  const lastAiMessage = (() => {
-    for (let i = aiMessages.length - 1; i >= 0; i--) {
-      if (aiMessages[i].from === 'ai') return aiMessages[i];
-    }
-    return null;
-  })();
+  useEffect(() => {
+    adjustAiInputHeight();
+  }, [aiInput]);
 
   const closeSidebar = () => {
     setIsSidebarOpen(false);
@@ -382,15 +364,14 @@ const NavigationBar = ({ onSearch }) => {
               if (typeof m.text === 'string') raw = m.text;
               else if (m.text && typeof m.text === 'object') raw = m.text.content || m.text.text || JSON.stringify(m.text);
               else raw = String(m.text);
-
-              const contentHtml = renderMarkdownToHtml(raw);
-
               return (
-                <div
-                  key={idx}
-                  className={`ai-message ${m.from === 'user' ? 'user' : 'ai'}`}
-                  dangerouslySetInnerHTML={{ __html: contentHtml }}
-                />
+                <div key={idx} className={`ai-message ${m.from === 'user' ? 'user' : 'ai'}`}>
+                  <ReactMarkdown
+                    children={raw}
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                  />
+                </div>
               );
             })}
 
