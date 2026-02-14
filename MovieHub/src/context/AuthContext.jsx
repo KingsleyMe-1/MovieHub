@@ -162,8 +162,9 @@ export const AuthProvider = ({ children }) => {
   const signOut = async () => {
     try {
       await puter.auth.signOut();
-    } catch (error) {      
+    } catch (error) {
       console.error('Error signing out:', error);
+    } finally {
       setUser(null);
       setAuthError(null);
       setCloudError(null);
