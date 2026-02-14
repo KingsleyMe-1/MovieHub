@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import '../styles/NavigationBar.css';
+import puter from '@heyputer/puter.js';
 
 const NavigationBar = ({ onSearch }) => {
   const [searchInput, setSearchInput] = useState('');
@@ -11,6 +13,122 @@ const NavigationBar = ({ onSearch }) => {
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
+
+  const [isAiOpen, setIsAiOpen] = useState(false);
+  const [aiInput, setAiInput] = useState('');
+  const [aiMessages, setAiMessages] = useState([]);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+
+  const toggleAi = () => {
+    setIsAiOpen((s) => !s);
+  };
+
+  const closeAi = () => {
+    setIsAiOpen(false);
+  };
+
+  useEffect(() => {
+    if (!isAiOpen) return;
+    setAiError('');
+  }, [isAiOpen]);
+
+  useEffect(() => {
+    if (isAiOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prev || '';
+      };
+    }
+    document.body.style.overflow = document.body.style.overflow || '';
+    return undefined;
+  }, [isAiOpen]);
+
+  const sendToPuter = async (prompt) => {
+    if (!prompt || !prompt.trim()) return;
+    setAiLoading(true);
+    setAiError('');
+    // add user message
+    setAiMessages((m) => [...m, { from: 'user', text: prompt }]);
+    try {
+      // require user to be signed in to Puter for ai.chat
+      if (!puter?.auth || !puter.auth.isSignedIn || !puter.auth.isSignedIn()) {
+        setAiError('Please sign in to Puter to use the AI assistant.');
+        setAiLoading(false);
+        return;
+      }
+
+      let result;
+      if (puter?.ai && typeof puter.ai.chat === 'function') {
+        result = await puter.ai.chat(prompt, {
+                model: "openai/gpt-5.2-chat",
+                tools: [{ type: "web_search" }],
+            });
+      } 
+      else {
+        throw new Error('Puter.ai.chat not available — check library import');
+      }
+
+      let text = null;
+      if (result?.message?.content && typeof result.message.content === 'string') {
+        text = result.message.content;
+        console.log('Result 2: ', text);
+      }
+
+      if (!text) text = 'No content returned from AI.';
+      text = String(text).trim();
+
+      setAiMessages((m) => [...m, { from: 'ai', text }]);
+      setAiLoading(false);
+    } catch (err) {
+      setAiError(String(err.message || err));
+      setAiMessages((m) => [...m, { from: 'ai', text: 'Puter.js unavailable or returned an error.' }]);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const onAiInputChange = (value) => {
+    setAiInput(value);
+  };
+
+  const onAiKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const prompt = aiInput?.trim();
+      if (prompt) {
+        sendToPuter(prompt);
+        setAiInput('');
+      }
+    }
+  };
+
+  const escapeHtml = (str) =>
+    String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+  const renderMarkdownToHtml = (text) => {
+    if (!text) return '';
+    let s = escapeHtml(text);
+    s = s.replace(/^##\s*(.+)$/gm, '<h2>$1</h2>');
+    s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    s = s.replace(/ {2}\n/g, '<br/>');
+    s = s.replace(/\n/g, '<br/>');
+    return s;
+  };
+
+  const lastAiMessage = (() => {
+    for (let i = aiMessages.length - 1; i >= 0; i--) {
+      if (aiMessages[i].from === 'ai') return aiMessages[i];
+    }
+    return null;
+  })();
 
   const closeSidebar = () => {
     setIsSidebarOpen(false);
@@ -99,17 +217,34 @@ const NavigationBar = ({ onSearch }) => {
           </form>
         </div>
 
-        <button
-          type='button'
-          className={`navbar-hamburger ${user ? 'show-always' : ''}`}
-          onClick={toggleSidebar}
-          aria-label='Menu'
-          aria-expanded={isSidebarOpen}
-        >
-          <svg viewBox='0 0 24 24' fill='currentColor'>
-            <path d='M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z' />
-          </svg>
-        </button>
+        <div className='flex '>
+          <button
+            type='button'
+            className={`navbar-hamburger ${user ? 'show-always' : ''}`}
+            onClick={toggleSidebar}
+            aria-label='Menu'
+            aria-expanded={isSidebarOpen}
+          >
+            <svg viewBox='0 0 24 24' fill='currentColor'>
+              <path d='M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z' />
+            </svg>
+          </button>
+
+          <button
+            type='button'
+            className={`navbar-ai-button ${!user ? 'disabled' : ''}`}
+            onClick={user ? toggleAi : undefined}
+            aria-label='AI Assistant'
+            aria-expanded={isAiOpen}
+            disabled={!user}
+            aria-disabled={!user}
+            title={!user ? 'Sign in to use the AI assistant' : 'AI Assistant'}
+          >
+            <svg viewBox='0 0 24 24' fill='currentColor' className='navbar-ai-icon' aria-hidden='true'>
+              <path d='M12 2.5c.3 0 .6.18.74.46l.92 1.83 1.83.92c.28.14.46.44.46.74s-.18.6-.46.74l-1.83.92-.92 1.83c-.14.28-.44.46-.74.46s-.6-.18-.74-.46l-.92-1.83-1.83-.92c-.28-.14-.46-.44-.46-.74s.18-.6.46-.74l1.83-.92.92-1.83c.14-.28.44-.46.74-.46zm6 9.5c.24 0 .46.14.58.36l.72 1.44 1.44.72c.22.12.36.34.36.58s-.14.46-.36.58l-1.44.72-.72 1.44c-.12.22-.34.36-.58.36s-.46-.14-.58-.36l-.72-1.44-1.44-.72c-.22-.12-.36-.34-.36-.58s.14-.46.36-.58l1.44-.72.72-1.44c.12-.22.34-.36.58-.36zM4 6.5c.18 0 .35.1.44.26l.54 1.08 1.08.54c.16.08.26.26.26.44s-.1.36-.26.44l-1.08.54-.54 1.08c-.08.16-.26.26-.44.26s-.36-.1-.44-.26L2.9 9.8 1.82 9.26C1.66 9.18 1.56 9 1.56 8.82s.1-.36.26-.44L3.3 7.14l.54-1.08c.09-.16.26-.26.44-.26z'/>
+            </svg>
+          </button>
+        </div>        
 
         {!user && (
           <div className='navbar-actions'>
@@ -140,6 +275,17 @@ const NavigationBar = ({ onSearch }) => {
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Escape' && closeSidebar()}
           aria-label='Close sidebar'
+        />
+      )}
+
+      {isAiOpen && (
+        <div
+          className='sidebar-overlay ai-overlay'
+          onClick={closeAi}
+          role='button'
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Escape' && closeAi()}
+          aria-label='Close AI sidebar'
         />
       )}
 
@@ -215,6 +361,69 @@ const NavigationBar = ({ onSearch }) => {
               LOG IN
             </button>
           )}
+        </div>
+      </div>
+
+      <div className={`ai-sidebar ${isAiOpen ? 'open' : ''}`} aria-hidden={!isAiOpen}>
+        <button
+          type='button'
+          className='sidebar-close'
+          onClick={closeAi}
+          aria-label='Close AI'
+        >
+          <svg viewBox='0 0 24 24' fill='currentColor'>
+            <path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' />
+          </svg>
+        </button>
+
+        <button
+          type='button'
+          className='ai-sidebar-close'
+          onClick={closeAi}
+          aria-label='Close AI'
+        >
+          <svg viewBox='0 0 24 24' fill='currentColor'>
+            <path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' />
+          </svg>
+        </button>
+
+        <div className='ai-content'>
+          <div className='ai-messages'>
+            {aiMessages.map((m, idx) => {
+              let raw = '';
+              if (typeof m.text === 'string') raw = m.text;
+              else if (m.text && typeof m.text === 'object') raw = m.text.content || m.text.text || JSON.stringify(m.text);
+              else raw = String(m.text);
+
+              const contentHtml = renderMarkdownToHtml(raw);
+
+              return (
+                <div
+                  key={idx}
+                  className={`ai-message ${m.from === 'user' ? 'user' : 'ai'}`}
+                  dangerouslySetInnerHTML={{ __html: contentHtml }}
+                />
+              );
+            })}
+
+            {aiLoading && !lastAiMessage && (
+              <div className='ai-message ai-loading'>Thinking...</div>
+            )}
+
+            {aiError && <div className='ai-error'>{aiError}</div>}
+          </div>
+
+          <div className='ai-input-row'>
+            <input
+              type='text'
+              placeholder='Ask the AI about movies (press Enter to send)'
+              value={aiInput}
+              onChange={(e) => onAiInputChange(e.target.value)}
+              onKeyDown={onAiKeyDown}
+              className='ai-input'
+              aria-label='AI chat input'
+            />
+          </div>
         </div>
       </div>
     </nav>
