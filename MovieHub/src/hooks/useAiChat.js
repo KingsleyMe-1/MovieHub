@@ -130,5 +130,7 @@ export const useAiChat = () => {
     closeAi,
     handleInputChange,
     handleKeyDown,
+    sendMessage,
+    resetInputHeight
   };
 };
