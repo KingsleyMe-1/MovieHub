@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useAiChat } from '../hooks/useAiChat';
 import '../styles/NavigationBar.css';
-import puter from '@heyputer/puter.js';
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
-import "highlight.js/styles/github.css";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github.css';
 
 const NavigationBar = ({ onSearch }) => {
   const [searchInput, setSearchInput] = useState('');
@@ -14,120 +14,21 @@ const NavigationBar = ({ onSearch }) => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
+  const {
+    isAiOpen,
+    aiInput,
+    aiMessages,
+    aiLoading,
+    aiError,
+    aiInputRef,
+    toggleAi,
+    closeAi,
+    handleInputChange: onAiInputChange,
+    handleKeyDown: onAiKeyDown,
+  } = useAiChat();
+
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
-  };
-
-  const [isAiOpen, setIsAiOpen] = useState(false);
-  const [aiInput, setAiInput] = useState('');
-  const [aiMessages, setAiMessages] = useState([]);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState('');
-  const aiInputRef = useRef(null);
-
-  const toggleAi = () => {
-    setIsAiOpen((s) => !s);
-  };
-
-  const closeAi = () => {
-    setIsAiOpen(false);
-  };
-
-  useEffect(() => {
-    if (!isAiOpen) return;
-    setAiError('');
-  }, [isAiOpen]);
-
-  useEffect(() => {
-    if (isAiOpen) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = prev || '';
-      };
-    }
-    document.body.style.overflow = document.body.style.overflow || '';
-    return undefined;
-  }, [isAiOpen]);
-
-  const sendToPuter = async (prompt) => {
-    if (!prompt || !prompt.trim()) return;
-    setAiLoading(true);
-    setAiError('');
-    // add user message
-    setAiMessages((m) => [...m, { from: 'user', text: prompt }]);
-    try {
-      // require user to be signed in to Puter for ai.chat
-      if (!puter?.auth || !puter.auth.isSignedIn || !puter.auth.isSignedIn()) {
-        setAiError('Please sign in to Puter to use the AI assistant.');
-        setAiLoading(false);
-        return;
-      }
-
-      let result;
-      if (puter?.ai && typeof puter.ai.chat === 'function') {
-        result = await puter.ai.chat(prompt, {
-                model: "openai/gpt-5.2-chat",
-                tools: [{ type: "web_search" }],
-            });
-      } 
-      else {
-        throw new Error('Puter.ai.chat not available — check library import');
-      }
-
-      let text = null;
-      if (result?.message?.content && typeof result.message.content === 'string') {
-        text = result.message.content;
-        console.log('Result 2: ', text);
-      }
-
-      if (!text) text = 'No content returned from AI.';
-      text = String(text).trim();
-
-      setAiMessages((m) => [...m, { from: 'ai', text }]);
-    } catch (err) {
-      setAiError(String(err.message || err));
-      setAiMessages((m) => [...m, { from: 'ai', text: 'Puter.js unavailable or returned an error.' }]);
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
-  const onAiInputChange = (value) => {
-    setAiInput(value);
-    // adjust height on input change
-    try {
-      if (aiInputRef?.current) {
-        const el = aiInputRef.current;
-        el.style.height = 'auto';
-        const newHeight = Math.min(el.scrollHeight, 240);
-        el.style.height = newHeight + 'px';
-        el.style.overflowY = el.scrollHeight > 240 ? 'auto' : 'hidden';
-      }
-    } catch (e) {
-      // ignore
-    }
-  };
-
-  const onAiKeyDown = (e) => {
-    // Send on Enter (Shift+Enter for newline)
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      const prompt = aiInput?.trim();
-      if (prompt) {
-        sendToPuter(prompt);
-        setAiInput('');
-        // reset height after clearing
-        setTimeout(() => {
-          try {
-            if (aiInputRef?.current) {
-              aiInputRef.current.style.height = 'auto';
-              aiInputRef.current.style.overflowY = 'hidden';
-            }
-          } catch (err) {}
-        }, 0);
-      }
-    }
   };
 
   const closeSidebar = () => {
@@ -420,5 +321,3 @@ const NavigationBar = ({ onSearch }) => {
 };
 
 export default NavigationBar;
-
-

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL, API_OPTIONS } from '../utils/api';
 import MovieCard from './MovieCard';
 import Loader from './Loader';
 
@@ -13,17 +14,7 @@ const SimilarMovies = ({ movieId }) => {
     const fetchSimilarMovies = async () => {
       setLoading(true);
       try {
-        const API_KEY = import.meta.env.VITE_API_TMDB_KEY;
-        const API_URL = 'https://api.themoviedb.org/3';
-        const API_OPTIONS = {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_KEY}`,
-          },
-        };
-
-        const endpoint = `${API_URL}/movie/${movieId}/similar?language=en-US&page=1`;
+        const endpoint = `${API_BASE_URL}/movie/${movieId}/similar?language=en-US&page=1`;
         const response = await fetch(endpoint, API_OPTIONS);
         const data = await response.json();
 
@@ -81,3 +72,4 @@ const SimilarMovies = ({ movieId }) => {
 };
 
 export default SimilarMovies;
+

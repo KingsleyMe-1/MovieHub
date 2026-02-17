@@ -1,16 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { API_BASE_URL as BASE_URL, API_OPTIONS } from '../utils/api';
 
-const API_KEY = import.meta.env.VITE_API_TMDB_KEY;
-const BASE_URL = 'https://api.themoviedb.org/3';
-const API_OPTIONS = {
-  method: 'GET',
-  headers: {
-    accept: 'application/json',
-    Authorization: `Bearer ${API_KEY}`,
-  },
-};
-
-//Async thunk for fetching movies
 export const fetchMovies = createAsyncThunk(
   'movies/fetchMovies',
   async ({ category, page, searchTerm }, { rejectWithValue }) => {
@@ -84,7 +74,7 @@ export const fetchWatchlistMovies = createAsyncThunk(
 
           return null;
         }catch (error) {
-          console.error(`Error fetching movie with ID ${movieIds}:`, error);
+          console.error(`Error fetching movie with ID ${id}:`, error);
           return null;
         }
       });
@@ -98,7 +88,6 @@ export const fetchWatchlistMovies = createAsyncThunk(
   }
 );
 
-//Initial state
 const initialState = {
   searchTerm: '',
   allMovies: [],
@@ -114,7 +103,6 @@ const initialState = {
   hasMore: true,
 };
 
-//Create Slice
 const moviesSlice = createSlice({
   name: 'movies',
   initialState,

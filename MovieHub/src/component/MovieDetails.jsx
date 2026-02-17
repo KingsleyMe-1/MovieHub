@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getComments, saveComment, deleteComment } from '../utils/commentStorage';
+import { API_BASE_URL, API_OPTIONS } from '../utils/api';
+import { formatRelativeDate } from '../utils/formatDate';
+import { useToast } from '../hooks/useToast';
 import '../styles/MovieDetails.css';
 import SimilarMovies from './SimilarMovies';
 import MovieDetailsLoader from './MovieDetailsLoader';
@@ -13,10 +16,11 @@ const MovieDetails = () => {
   const [movieData, setMovieData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [toast, setToast] = useState({ show: false, message: '' });
+  const { toast, showToast } = useToast();
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const parsedMovieId = useMemo(() => Number.parseInt(movieId), [movieId]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -29,17 +33,7 @@ const MovieDetails = () => {
     const fetchMovieDetails = async () => {
       setLoading(true);
       try {
-        const API_KEY = import.meta.env.VITE_API_TMDB_KEY;
-        const API_URL = 'https://api.themoviedb.org/3';
-        const API_OPTIONS = {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${API_KEY}`,
-          },
-        };
-
-        const endpoint = `${API_URL}/movie/${movieId}?append_to_response=credits,videos`;
+        const endpoint = `${API_BASE_URL}/movie/${movieId}?append_to_response=credits,videos`;
         const response = await fetch(endpoint, API_OPTIONS);
         const data = await response.json();
 
@@ -105,13 +99,6 @@ const MovieDetails = () => {
     (video) => video.type === 'Trailer' && video.site === 'YouTube'
   );
 
-  const showToast = (message) => {
-    setToast({ show: true, message });
-    setTimeout(() => {
-      setToast({ show: false, message: '' });
-    }, 3000);
-  };
-
   const handleDisabledWatchlistClick = () => {
     showToast('Sign in to Add to Watchlist');
   };
@@ -124,14 +111,14 @@ const MovieDetails = () => {
     if (!user) {
       return;
     }
-    addToWatchlist(parseInt(movieId));
+    addToWatchlist(parsedMovieId);
   };
 
   const handleAddToFavorites = () => {
     if (!user) {
       return;
     }
-    addToFavorites(parseInt(movieId));
+    addToFavorites(parsedMovieId);
   };
 
   const handleCommentSubmit = (e) => {
@@ -179,21 +166,6 @@ const MovieDetails = () => {
     }
   };
 
-  const formatCommentDate = (timestamp) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInMs = now - date;
-    const diffInMinutes = Math.floor(diffInMs / 60000);
-    const diffInHours = Math.floor(diffInMs / 3600000);
-    const diffInDays = Math.floor(diffInMs / 86400000);
-
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
-    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-    if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-    
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  };
 
   return (
     <div className='details-page'>
@@ -229,19 +201,19 @@ const MovieDetails = () => {
                 onClick={!user ? handleDisabledWatchlistClick : undefined}
               >
                 <button
-                  className={`action-btn watchlist-btn ${isInWatchlist(parseInt(movieId)) ? 'active' : ''}`}
+                  className={`action-btn watchlist-btn ${isInWatchlist(parsedMovieId) ? 'active' : ''}`}
                   onClick={handleAddToWatchlist}
                   disabled={!user}
                 >
                   <svg className='btn-icon' viewBox='0 0 24 24' fill='currentColor'>
-                    {isInWatchlist(parseInt(movieId)) ? (
+                    {isInWatchlist(parsedMovieId) ? (
                       <path d='M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z' />
                     ) : (
                       <path d='M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z' />
                     )}
                   </svg>
                   <span className='btn-text'>
-                    {isInWatchlist(parseInt(movieId)) ? 'In Watchlist' : 'Add to Watchlist'}
+                    {isInWatchlist(parsedMovieId) ? 'In Watchlist' : 'Add to Watchlist'}
                   </span>
                 </button>
                 {!user && <span className='custom-tooltip'>Sign in to Add to Watchlist</span>}
@@ -251,19 +223,19 @@ const MovieDetails = () => {
                 onClick={!user ? handleDisabledFavoritesClick : undefined}
               >
                 <button
-                  className={`action-btn favorite-btn ${isFavorite(parseInt(movieId)) ? 'active' : ''}`}
+                  className={`action-btn favorite-btn ${isFavorite(parsedMovieId) ? 'active' : ''}`}
                   onClick={handleAddToFavorites}
                   disabled={!user}
                 >
                   <svg className='btn-icon' viewBox='0 0 24 24' fill='currentColor'>
-                    {isFavorite(parseInt(movieId)) ? (
+                    {isFavorite(parsedMovieId) ? (
                       <path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' />
                     ) : (
                       <path d='M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z' />
                     )}
                   </svg>
                   <span className='btn-text black'>
-                    {isFavorite(parseInt(movieId)) ? 'Liked' : 'Add to Favorites'}
+                    {isFavorite(parsedMovieId) ? 'Liked' : 'Add to Favorites'}
                   </span>
                 </button>
                 {!user && <span className='custom-tooltip'>Sign in to Add to Favorites</span>}
@@ -448,7 +420,7 @@ const MovieDetails = () => {
                       </svg>
                       <div className='comment-user-info'>
                         <span className='comment-user-name'>{comment.userName}</span>
-                        <span className='comment-timestamp'>{formatCommentDate(comment.timestamp)}</span>
+                        <span className='comment-timestamp'>{formatRelativeDate(comment.timestamp)}</span>
                       </div>
                     </div>
                     {user &&
@@ -483,5 +455,3 @@ const MovieDetails = () => {
 };
 
 export default MovieDetails;
-
-
