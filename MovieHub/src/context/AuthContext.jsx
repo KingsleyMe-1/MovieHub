@@ -1,7 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import puter from '@heyputer/puter.js';
 
-/** Path for user's watchlist and favorites in Puter cloud storage (relative to user's app root). */
 const MOVIEHUB_DATA_PATH = 'moviehub_data.json';
 
 const AuthContext = createContext();
@@ -16,10 +15,7 @@ export const useAuth = () => {
 
 const defaultUserData = () => ({ favorites: [], watchlist: [] });
 
-/**
- * Read favorites and watchlist from Puter cloud storage (puter.fs.read).
- * Returns default empty data if file does not exist or read fails.
- */
+
 async function loadUserDataFromCloud() {
   if (!puter.auth.isSignedIn()) return defaultUserData();
   try {
@@ -38,9 +34,6 @@ async function loadUserDataFromCloud() {
   }
 }
 
-/**
- * Write favorites and watchlist to Puter cloud storage (puter.fs.write).
- */
 async function saveUserDataToCloud(data) {
   if (!puter.auth.isSignedIn()) return;
   try {
@@ -51,23 +44,6 @@ async function saveUserDataToCloud(data) {
   }
 }
 
-/**
- * Delete the MovieHub data file from Puter cloud (e.g. when user clears all data).
- */
-async function deleteUserDataFromCloud() {
-  if (!puter.auth.isSignedIn()) return;
-  try {
-    await puter.fs.delete(MOVIEHUB_DATA_PATH);
-  } catch (error) {
-    if (error?.code !== 'NOT_FOUND' && error?.message?.toLowerCase?.() !== 'not found') {
-      console.error('Error deleting MovieHub data from cloud:', error);
-    }
-  }
-}
-
-/**
- * Map Puter user object to our app user shape, with cloud-loaded favorites and watchlist.
- */
 function mapPuterUserToAppUser(puterUser, cloudData) {
   const data = cloudData ?? defaultUserData();
   return {
@@ -86,13 +62,11 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
   const [cloudError, setCloudError] = useState(null);
 
-  /** Ref so queued saves always read the latest state (avoids concurrent writes overwriting each other). */
   const userRef = useRef(null);
   useEffect(() => {
     userRef.current = user;
   }, [user]);
 
-  /** Sequential save queue: each save runs after the previous one and writes current userRef state. */
   const savePromiseRef = useRef(Promise.resolve());
   const enqueueCloudSave = useCallback(() => {
     const promise = savePromiseRef.current.then(async () => {
@@ -143,9 +117,6 @@ export const AuthProvider = ({ children }) => {
     init();
   }, [syncUserFromPuter]);
 
-  /**
-   * Sign in via Puter (opens popup). Must be called from a user gesture.
-   */
   const signIn = async () => {
     setAuthError(null);
     try {

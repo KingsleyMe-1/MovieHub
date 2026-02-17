@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   fetchMovies,
@@ -8,6 +8,8 @@ import {
   incrementPage,
 } from '../store/movieSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { CATEGORY_TABS, CATEGORY_TITLES } from '../constants/categories';
 import MovieCard from './MovieCard';
 import SkeletonLoader from './Loader';
 import TrendingSkeleton from './TrendingSkeleton';
@@ -28,7 +30,6 @@ const HomePage = () => {
     hasMore,
     errorMessage,
   } = useSelector((state) => state.movies);
-  const observerTarget = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,50 +40,37 @@ const HomePage = () => {
     dispatch(fetchTrendingMovies());
   }, [searchTerm]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loadingMore && !loadingMovies) {
-          dispatch(incrementPage());
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const currentTarget = observerTarget.current;
-    if (currentTarget) {
-      observer.observe(currentTarget);
+  const observerTarget = useIntersectionObserver(() => {
+    if (hasMore && !loadingMore && !loadingMovies) {
+      dispatch(incrementPage());
     }
+  });
 
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget);
-      }
-    };
-  }, [dispatch, hasMore, loadingMore, loadingMovies]);
+  const handleSearch = useCallback(
+    (term) => {
+      dispatch(setSearchTerm(term));
+    },
+    [dispatch]
+  );
 
-  const handleSearch = (term) => {
-    dispatch(setSearchTerm(term));
-  };
+  const handleCategoryChange = useCallback(
+    (newCategory) => {
+      dispatch(setCategory(newCategory));
+    },
+    [dispatch]
+  );
 
-  const handleCategoryChange = (newCategory) => {
-    dispatch(setCategory(newCategory));
-  };
-
-  const handleMovieClick = (movieId) => {
-    navigate(`/movie/${movieId}`);
-  };
+  const handleMovieClick = useCallback(
+    (movieId) => {
+      navigate(`/movie/${movieId}`);
+    },
+    [navigate]
+  );
 
   const getCategoryTitle = () => {
-    const categoryTitles = {
-      popular: 'Popular',
-      now_playing: 'Now Playing',
-      top_rated: 'Top Rated',
-      upcoming: 'Upcoming',
-    };
     return searchTerm
       ? `Search Results: ${searchTerm}`
-      : `${categoryTitles[category] || 'All'} Movies`;
+      : `${CATEGORY_TITLES[category] || 'All'} Movies`;
   };
 
   return (
@@ -91,12 +79,7 @@ const HomePage = () => {
 
       <div className='category-tabs-wrapper'>
         <div className='category-tabs'>
-          {[
-            { id: 'popular', label: 'Popular' },
-            { id: 'now_playing', label: 'Now playing' },
-            { id: 'top_rated', label: 'Top rated' },
-            { id: 'upcoming', label: 'Upcoming' },
-          ].map((cat) => (
+          {CATEGORY_TABS.map((cat) => (
             <button
               key={cat.id}
               className={`category-tab-btn ${!searchTerm && category === cat.id ? 'active' : ''}`}

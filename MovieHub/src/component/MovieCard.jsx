@@ -1,8 +1,8 @@
-import React from 'react';
+import { memo } from 'react';
 
-const MovieCard = ({
+const MovieCard = memo(function MovieCard({
   movie: { title, poster_path, vote_average, original_language, release_date },
-}) => {
+}) {
   const handleImageError = (e) => {
     e.target.style.display = 'none';
   };
@@ -32,6 +32,7 @@ const MovieCard = ({
       </div>
     </div>
   );
-};
+});
 
 export default MovieCard;
+
